@@ -266,7 +266,9 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
 
     @Override
     public void onMetadataUpdated(MediaMetadataCompat metadata) {
-        Log.d(TAG, "Metadata updated: " + metadata.toString());
-        mSession.setMetadata(metadata);
+        if (metadata != null) {
+            Log.d(TAG, "Metadata updated: " + metadata.toString());
+            mSession.setMetadata(metadata);
+        }
     }
 }
