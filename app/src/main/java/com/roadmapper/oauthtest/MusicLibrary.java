@@ -162,7 +162,7 @@ class MusicLibrary {
                         .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mediaId)
                         //.putString(MediaMetadata.METADATA_KEY_ALBUM, album)
                         .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
-                        .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, duration * 1000)
+                        .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, duration)
                         .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, description)
                         .putString(MediaMetadataCompat.METADATA_KEY_GENRE, genre)
                         .putString(MediaMetadataCompat.METADATA_KEY_ART_URI, hiResUrl)
