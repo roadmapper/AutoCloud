@@ -128,8 +128,26 @@ class MusicLibrary {
         music.put(musicId, metadata);
     }*/
 
-    public static MediaMetadataCompat getMetadata(Context ctx, String mediaId) {
-        MediaMetadataCompat metadataWithoutBitmap = music.get(mediaId);
+    public static synchronized void updateMusicArt(String musicId, Bitmap albumArt, Bitmap icon) {
+        MediaMetadataCompat metadata = getMetadata(musicId);
+        metadata = new MediaMetadataCompat.Builder(metadata)
+
+                // set high resolution bitmap in METADATA_KEY_ALBUM_ART. This is used, for
+                // example, on the lockscreen background when the media session is active.
+                .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumArt)
+
+                // set small version of the album art in the DISPLAY_ICON. This is used on
+                // the MediaDescription and thus it should be small to be serialized if
+                // necessary
+                .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, icon)
+
+                .build();
+
+        music.put(musicId, metadata);
+    }
+
+    public static MediaMetadataCompat getMetadata(String mediaId) {
+        MediaMetadataCompat metadata = music.get(mediaId);
         Bitmap albumArt = null;
         //try {
             //albumArt = getAlbumBitmap(mediaId);
@@ -139,7 +157,7 @@ class MusicLibrary {
 
         // Since MediaMetadata is immutable, we need to create a copy to set the album art
         // We don't set it initially on all items so that they don't take unnecessary memory
-        MediaMetadataCompat.Builder builder = new MediaMetadataCompat.Builder(metadataWithoutBitmap);
+        MediaMetadataCompat.Builder builder = new MediaMetadataCompat.Builder(metadata);
         /*for (String key: new String[]{MediaMetadata.METADATA_KEY_MEDIA_ID,
                 MediaMetadata.METADATA_KEY_ALBUM, MediaMetadata.METADATA_KEY_ARTIST,
                 MediaMetadata.METADATA_KEY_GENRE, MediaMetadata.METADATA_KEY_TITLE}) {

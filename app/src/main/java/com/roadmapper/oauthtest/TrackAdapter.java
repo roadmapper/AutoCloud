@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -71,10 +71,10 @@ public class TrackAdapter extends ArrayAdapter<Track> {
     }
 
     static class ViewHolder {
-        @Bind(R.id.artwork) ImageView artwork;
-        @Bind(R.id.trackname) TextView trackName;
-        @Bind(R.id.user) TextView user;
-        @Bind(R.id.duration) TextView duration;
+        @BindView(R.id.artwork) ImageView artwork;
+        @BindView(R.id.trackname) TextView trackName;
+        @BindView(R.id.user) TextView user;
+        @BindView(R.id.duration) TextView duration;
 
         public ViewHolder(View view) {
             ButterKnife.bind(this, view);

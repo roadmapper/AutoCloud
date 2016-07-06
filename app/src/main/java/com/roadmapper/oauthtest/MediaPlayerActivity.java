@@ -25,7 +25,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -36,25 +36,25 @@ import butterknife.ButterKnife;
 // TODO: and will play music on top of each other. This needs to change to a music service.
 public class MediaPlayerActivity extends AppCompatActivity {
 
-    @Bind(R.id.pause)
+    @BindView(R.id.pause)
     ImageButton mPauseImageButton;
-    @Bind(R.id.play)
+    @BindView(R.id.play)
     ImageButton mPlayImageButton;
-    @Bind(R.id.artist_tv)
+    @BindView(R.id.artist_tv)
     TextView mArtistTextView;
-    @Bind(R.id.title_tv)
+    @BindView(R.id.title_tv)
     TextView mTitleTextView;
-    @Bind(R.id.cover_image_iv)
+    @BindView(R.id.cover_image_iv)
     ImageView mCoverImageImageView;
-    @Bind(R.id.sb)
+    @BindView(R.id.sb)
     SeekBar mSeekBar;
-    @Bind(R.id.total_time_tv)
+    @BindView(R.id.total_time_tv)
     TextView mTotalTimeTextView;
-    @Bind(R.id.current_time_tv)
+    @BindView(R.id.current_time_tv)
     TextView mCurrentTimeTextView;
-    @Bind(R.id.media_rl)
+    @BindView(R.id.media_rl)
     RelativeLayout mMediaRelativeLayout;
-    @Bind(R.id.pb)
+    @BindView(R.id.pb)
     ProgressBar mProgressBar;
 
     private MediaPlayer mMediaPlayer;

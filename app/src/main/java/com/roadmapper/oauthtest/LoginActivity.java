@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class LoginActivity extends AppCompatActivity {
@@ -26,10 +26,10 @@ public class LoginActivity extends AppCompatActivity {
             AutoCloudApplication.CLIENT_ID + "&redirect_uri=" + redirectUri +
             "&response_type=token&display=popup&scope=non-expiring";
 
-    @Bind(R.id.sign_in_button)
+    @BindView(R.id.sign_in_button)
     Button signInButton;
 
-    @Bind(R.id.web_button)
+    @BindView(R.id.web_button)
     Button webButton;
 
     @Override

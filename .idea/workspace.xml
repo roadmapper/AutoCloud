@@ -26,9 +26,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c9c14ea6-e606-43bd-b206-506b1b2057f1" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build.gradle" afterPath="$PROJECT_DIR$/app/build.gradle" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/LoginActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/LoginActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MainActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MediaPlayerActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MediaPlayerActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MusicLibrary.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MusicLibrary.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MusicService.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MusicService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/PlaybackManager.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/PlaybackManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/TrackAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/TrackAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/TrackRecyclerAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/TrackRecyclerAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
     </list>
     <ignored path="OAuthTest.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -64,8 +72,22 @@
       <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1770">
-              <caret line="161" column="39" selection-start-line="161" selection-start-column="39" selection-end-line="161" selection-end-column="39" />
+            <state relative-caret-position="590">
+              <caret line="291" column="22" selection-start-line="291" selection-start-column="22" selection-end-line="291" selection-end-column="22" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#11101#11851#0" expanded="true" />
+                <element signature="e#11850#11851#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TrackRecyclerAdapter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/TrackRecyclerAdapter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1590">
+              <caret line="111" column="15" selection-start-line="111" selection-start-column="15" selection-end-line="111" selection-end-column="15" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -76,21 +98,19 @@
       <file leaf-file-name="MusicLibrary.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MusicLibrary.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="314">
-              <caret line="164" column="84" selection-start-line="164" selection-start-column="84" selection-end-line="164" selection-end-column="84" />
+            <state relative-caret-position="-260">
+              <caret line="148" column="43" selection-start-line="148" selection-start-column="43" selection-end-line="148" selection-end-column="43" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PlaybackManager.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/PlaybackManager.java">
+      <file leaf-file-name="AlbumArtCache.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/AlbumArtCache.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="200">
-              <caret line="168" column="0" selection-start-line="168" selection-start-column="0" selection-end-line="168" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="243">
+              <caret line="88" column="19" selection-start-line="88" selection-start-column="19" selection-end-line="88" selection-end-column="19" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -98,8 +118,8 @@
       <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="19" column="31" selection-start-line="19" selection-start-column="31" selection-end-line="19" selection-end-column="31" />
+            <state relative-caret-position="150">
+              <caret line="10" column="27" selection-start-line="10" selection-start-column="27" selection-end-line="10" selection-end-column="27" />
               <folding />
             </state>
           </provider>
@@ -108,39 +128,20 @@
       <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="120">
+              <caret line="8" column="66" selection-start-line="8" selection-start-column="66" selection-end-line="8" selection-end-column="66" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="colors.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/values/colors.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Theme Editor" pinned="false" current-in-tab="false">
-        <entry file="android-dummy:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest//Theme Editor">
-          <provider selected="true" editor-type-id="themeEditor">
-            <state module-name="app" proportion="0.67" />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MusicService.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MusicService.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MusicService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="47">
-              <caret line="239" column="51" selection-start-line="239" selection-start-column="51" selection-end-line="239" selection-end-column="51" />
+            <state relative-caret-position="228">
+              <caret line="166" column="68" selection-start-line="166" selection-start-column="68" selection-end-line="166" selection-end-column="68" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#7452#7453#0" expanded="true" />
-                <element signature="e#7493#7494#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -149,26 +150,41 @@
       <file leaf-file-name="LoginActivity.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/LoginActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="38" column="98" selection-start-line="38" selection-start-column="8" selection-end-line="38" selection-end-column="98" />
+            <state relative-caret-position="465">
+              <caret line="31" column="13" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
               <folding>
-                <element signature="imports" expanded="false" />
-                <element signature="e#2064#2414#0" expanded="false" />
-                <element signature="e#2413#2414#0" expanded="false" />
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MediaNotificationManager2.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MediaNotificationManager2.java">
+      <file leaf-file-name="MediaPlayerActivity.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MediaPlayerActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="429">
-              <caret line="363" column="55" selection-start-line="363" selection-start-column="55" selection-end-line="363" selection-end-column="55" />
+            <state relative-caret-position="-615">
+              <caret line="254" column="35" selection-start-line="254" selection-start-column="35" selection-end-line="254" selection-end-column="35" />
               <folding>
-                <element signature="e#0#17293#0" expanded="true" />
-                <element signature="imports" expanded="true" />
+                <element signature="e#2066#2756#0" expanded="true" />
+                <element signature="e#2755#2756#0" expanded="true" />
+                <element signature="e#3669#3916#0" expanded="true" />
+                <element signature="e#3915#3916#0" expanded="true" />
+                <element signature="e#4550#5246#0" expanded="true" />
+                <element signature="e#5245#5246#0" expanded="true" />
+                <element signature="e#5288#6396#0" expanded="true" />
+                <element signature="e#6395#6396#0" expanded="true" />
+                <element signature="e#9018#9046#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TrackAdapter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/TrackAdapter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="255">
+              <caret line="17" column="27" selection-start-line="17" selection-start-column="27" selection-end-line="17" selection-end-column="27" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -841,6 +857,11 @@
                 <option name="name" value="generateDebugBuildConfig" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
+                <option name="description" value="Prepare com.jakewharton:butterknife:8.1.0" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="prepareComJakewhartonButterknife810Library" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
                 <option name="description" value="Assembles and tests this project." />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="build" />
@@ -1490,6 +1511,11 @@
                 <option name="name" value="generateDebugBuildConfig" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
+                <option name="description" value="Prepare com.jakewharton:butterknife:8.1.0" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/app" />
+                <option name="name" value="prepareComJakewhartonButterknife810Library" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
                 <option name="description" value="Assembles and tests this project." />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/app" />
                 <option name="name" value="build" />
@@ -1531,7 +1557,7 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="4390737554000" />
+        <entry key="$PROJECT_DIR$" value="4391623210000" />
       </map>
     </option>
     <option name="projectBuildClasspath">
@@ -1547,6 +1573,7 @@
                         <option name="entries">
                           <list>
                             <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/com/android/tools/build/gradle/2.2.0-alpha4/gradle-2.2.0-alpha4.jar" />
+                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.neenbedankt.gradle.plugins/android-apt/1.8/d3c508f0ea2b2bb93c2816a83351090dd662eaac/android-apt-1.8.jar" />
                             <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/com/android/tools/build/gradle-core/2.2.0-alpha4/gradle-core-2.2.0-alpha4.jar" />
                             <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/org/ow2/asm/asm/5.0.4/asm-5.0.4.jar" />
                             <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/org/ow2/asm/asm-commons/5.0.4/asm-commons-5.0.4.jar" />
@@ -1629,6 +1656,7 @@
                         <option name="entries">
                           <list>
                             <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/com/android/tools/build/gradle/2.2.0-alpha4/gradle-2.2.0-alpha4.jar" />
+                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.neenbedankt.gradle.plugins/android-apt/1.8/d3c508f0ea2b2bb93c2816a83351090dd662eaac/android-apt-1.8.jar" />
                             <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/com/android/tools/build/gradle-core/2.2.0-alpha4/gradle-core-2.2.0-alpha4.jar" />
                             <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/org/ow2/asm/asm/5.0.4/asm-5.0.4.jar" />
                             <option value="$APPLICATION_HOME_DIR$/gradle/m2repository/org/ow2/asm/asm-commons/5.0.4/asm-commons-5.0.4.jar" />
@@ -1857,7 +1885,6 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/SharedPrefManager.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_media_player.xml" />
         <option value="$PROJECT_DIR$/captures/com.roadmapper.oauthtest_2016.03.13_15.07.txt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/TrackAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/Activity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/LoginService.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MyMusicService.java" />
@@ -1871,16 +1898,13 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/OnClickListener.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/OnItemClickListener.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/ServiceGenerator.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MediaPlayerActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/AccessToken.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MediaNotificationManager.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/BitmapHelper.java" />
-        <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/SoundCloudApplication.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/SoundCloudClient.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_login.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/LoginActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_web.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/WebActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/autocloud/SoundCloudApplication.java" />
@@ -1894,16 +1918,20 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/autocloud/MediaNotificationManager2.java" />
         <option value="$PROJECT_DIR$/gradle.properties" />
         <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/TrackRecyclerAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/track_item_card.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/AlbumArtCache.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MediaNotificationManager2.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MusicLibrary.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/PlaybackManager.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MainActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/TrackRecyclerAdapter.java" />
+        <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/app/build.gradle" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MusicLibrary.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/TrackAdapter.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/LoginActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MusicService.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MediaPlayerActivity.java" />
       </list>
     </option>
   </component>
@@ -1998,24 +2026,6 @@
               <option name="myItemId" value="OAuthTest" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="OAuthTest" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
@@ -2023,8 +2033,8 @@
   </component>
   <component name="PropertiesComponent">
     <property name="android.sdk.path" value="$USER_HOME$/Library/Android/sdk" />
-    <property name="device.picker.selection" value="TA98903P4Y" />
-    <property name="SearchEverywhereHistoryKey" value="MusicSer&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/MusicService.java&#10;MediaService&#9;FILE&#9;file:///Users/vinaydandekar/Library/Android/sdk/sources/android-23/android/service/media/MediaBrowserService.java&#10;Cach&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/AlbumArtCache.java&#10;Login&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/LoginActivity.java&#10;Album&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/AlbumArtCache.java&#10;AutoC&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/AutoCloudApplication.java&#10;ServiceGenerator&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/ServiceGenerator.java&#10;track&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/TrackRecyclerAdapter.java&#10;Music&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/MusicService.java&#10;cache&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/AlbumArtCache.java&#10;Track&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/TrackRecyclerAdapter.java&#10;Main&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/MainActivity.java&#10;Trac&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/autocloud/TrackRecyclerAdapter.java&#10;Pla&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/PlaybackManager.java&#10;PlaybackMaa&#9;null&#9;null&#10;main&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/MainActivity.java&#10;Notif&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/MediaNotificationManager.java&#10;Notific&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/MediaNotificationManager.java&#10;Maina&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/MainActivity.java&#10;Andr&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/AndroidManifest.xml&#10;build.&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/build.gradle" />
+    <property name="device.picker.selection" value="Nexus_5_API_23" />
+    <property name="SearchEverywhereHistoryKey" value="Track&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/TrackRecyclerAdapter.java&#10;Album&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/AlbumArtCache.java&#10;MusicSer&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/MusicService.java&#10;MediaService&#9;FILE&#9;file:///Users/vinaydandekar/Library/Android/sdk/sources/android-23/android/service/media/MediaBrowserService.java&#10;Cach&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/AlbumArtCache.java&#10;Login&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/LoginActivity.java&#10;AutoC&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/AutoCloudApplication.java&#10;ServiceGenerator&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/ServiceGenerator.java&#10;track&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/TrackRecyclerAdapter.java&#10;Music&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/MusicService.java&#10;cache&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/AlbumArtCache.java&#10;Main&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/MainActivity.java&#10;Trac&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/autocloud/TrackRecyclerAdapter.java&#10;Pla&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/PlaybackManager.java&#10;PlaybackMaa&#9;null&#9;null&#10;main&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/MainActivity.java&#10;Notif&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/MediaNotificationManager.java&#10;Notific&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/MediaNotificationManager.java&#10;Maina&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/java/com/roadmapper/oauthtest/MainActivity.java&#10;Andr&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/src/main/AndroidManifest.xml&#10;build.&#9;FILE&#9;file:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest/app/build.gradle" />
     <property name="DEBUGGABLE_DEVICE" value="motorola-xt1095-TA98903P4Y" />
     <property name="DEBUGGABLE_PROCESS" value="com.roadmapper.oauthtest.debug" />
     <property name="SHOW_ALL_PROCESSES" value="false" />
@@ -2389,36 +2399,44 @@
       <option name="project" value="LOCAL" />
       <updated>1467694145480</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Fix log message to not occur when metadata is null onPause">
+      <created>1467694747112</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1467694747112</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1920" height="1173" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32731137" sideWeight="0.48509052" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3607595" sideWeight="0.41107562" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.40397352" sideWeight="0.5425985" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2922423" sideWeight="0.5255591" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32639545" sideWeight="0.4765708" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3607595" sideWeight="0.41107562" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.40397352" sideWeight="0.5489883" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34325185" sideWeight="0.48402557" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34247872" sideWeight="0.4797657" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32943678" sideWeight="0.4978701" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.40397352" sideWeight="0.45101172" order="11" side_tool="true" content_ui="tabs" />
-      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.40397352" sideWeight="0.45740148" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19169329" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3282876" sideWeight="0.48935038" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2922423" sideWeight="0.5255591" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -2428,7 +2446,6 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24866879" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3282876" sideWeight="0.4914803" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -2444,7 +2461,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Fix duration multiplier (not needed)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix duration multiplier (not needed)" />
+    <MESSAGE value="Fix log message to not occur when metadata is null onPause" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix log message to not occur when metadata is null onPause" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -2505,7 +2523,6 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_launcher.png" />
     <entry file="file://$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" />
     <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/drawable-mdpi/ic_car_cloud_queue.png" />
     <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/drawable-xxxhdpi/ic_car_cloud_queue.png" />
@@ -2520,7 +2537,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="343">
           <caret line="495" column="25" selection-start-line="495" selection-start-column="25" selection-end-line="495" selection-end-column="25" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2623,9 +2639,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/track_item.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="460">
           <caret line="54" column="24" selection-start-line="6" selection-start-column="4" selection-end-line="54" selection-end-column="24" />
@@ -2634,23 +2647,25 @@
           </folding>
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_media_player.xml">
       <provider editor-type-id="android-designer2">
         <state />
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_media_player.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
           <caret line="121" column="48" selection-start-line="114" selection-start-column="8" selection-end-line="121" selection-end-column="48" />
           <folding />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/values/dimens.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
           <caret line="2" column="17" selection-start-line="2" selection-start-column="17" selection-end-line="2" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2658,24 +2673,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="227">
           <caret line="337" column="29" selection-start-line="337" selection-start-column="29" selection-end-line="337" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MediaPlayerActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="333" column="33" selection-start-line="333" selection-start-column="33" selection-end-line="333" selection-end-column="33" />
-          <folding>
-            <element signature="e#5244#6352#0" expanded="true" />
-            <element signature="e#6351#6352#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/TrackRecyclerAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="54" column="56" selection-start-line="54" selection-start-column="56" selection-end-line="54" selection-end-column="56" />
         </state>
       </provider>
     </entry>
@@ -2716,25 +2713,25 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="168">
           <caret line="47" column="43" selection-start-line="47" selection-start-column="43" selection-end-line="47" selection-end-column="43" />
           <folding />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/track_item_card.xml">
       <provider editor-type-id="android-designer2">
         <state />
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/track_item_card.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
           <caret line="12" column="23" selection-start-line="12" selection-start-column="23" selection-end-line="12" selection-end-column="23" />
           <folding />
         </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-23/android/util/Log.java">
@@ -2744,17 +2741,6 @@
           <folding>
             <element signature="e#2714#2715#0" expanded="false" />
             <element signature="e#2774#2775#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/AlbumArtCache.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="393">
-          <caret line="109" column="82" selection-start-line="109" selection-start-column="36" selection-end-line="109" selection-end-column="82" />
-          <folding>
-            <element signature="e#0#6733#0" expanded="false" />
-            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -2770,18 +2756,6 @@
     <entry file="android-dummy:///Users/vinaydandekar/AndroidStudioProjects/OAuthTest//Theme Editor">
       <provider selected="true" editor-type-id="themeEditor">
         <state module-name="app" proportion="0.67" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/LoginActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="38" column="98" selection-start-line="38" selection-start-column="8" selection-end-line="38" selection-end-column="98" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#2064#2414#0" expanded="false" />
-            <element signature="e#2413#2414#0" expanded="false" />
-          </folding>
-        </state>
       </provider>
     </entry>
     <entry file="jar://$USER_HOME$/Library/Android/sdk/extras/android/m2repository/com/android/support/appcompat-v7/23.4.0/appcompat-v7-23.4.0-sources.jar!/android/support/v7/app/NotificationCompat.java">
@@ -2840,35 +2814,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1770">
-          <caret line="161" column="39" selection-start-line="161" selection-start-column="39" selection-end-line="161" selection-end-column="39" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="31" selection-start-line="19" selection-start-column="31" selection-end-line="19" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MediaNotificationManager2.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="429">
+        <state relative-caret-position="5445">
           <caret line="363" column="55" selection-start-line="363" selection-start-column="55" selection-end-line="363" selection-end-column="55" />
           <folding>
             <element signature="e#0#17293#0" expanded="true" />
@@ -2877,18 +2825,82 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MusicLibrary.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/PlaybackManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="314">
-          <caret line="164" column="84" selection-start-line="164" selection-start-column="84" selection-end-line="164" selection-end-column="84" />
+        <state relative-caret-position="365">
+          <caret line="263" column="6" selection-start-line="263" selection-start-column="6" selection-end-line="263" selection-end-column="6" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/AlbumArtCache.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="243">
+          <caret line="88" column="19" selection-start-line="88" selection-start-column="19" selection-end-line="88" selection-end-column="19" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/PlaybackManager.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MusicLibrary.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="168" column="0" selection-start-line="168" selection-start-column="0" selection-end-line="168" selection-end-column="0" />
+        <state relative-caret-position="-260">
+          <caret line="148" column="43" selection-start-line="148" selection-start-column="43" selection-end-line="148" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="590">
+          <caret line="291" column="22" selection-start-line="291" selection-start-column="22" selection-end-line="291" selection-end-column="22" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#11101#11851#0" expanded="true" />
+            <element signature="e#11850#11851#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/TrackRecyclerAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1590">
+          <caret line="111" column="15" selection-start-line="111" selection-start-column="15" selection-end-line="111" selection-end-column="15" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" column="66" selection-start-line="8" selection-start-column="66" selection-end-line="8" selection-end-column="66" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" column="27" selection-start-line="10" selection-start-column="27" selection-end-line="10" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/TrackAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="27" selection-start-line="17" selection-start-column="27" selection-end-line="17" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/LoginActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="31" column="13" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -2897,12 +2909,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MusicService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="47">
-          <caret line="239" column="51" selection-start-line="239" selection-start-column="51" selection-end-line="239" selection-end-column="51" />
+        <state relative-caret-position="228">
+          <caret line="166" column="68" selection-start-line="166" selection-start-column="68" selection-end-line="166" selection-end-column="68" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#7452#7453#0" expanded="true" />
-            <element signature="e#7493#7494#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/roadmapper/oauthtest/MediaPlayerActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-615">
+          <caret line="254" column="35" selection-start-line="254" selection-start-column="35" selection-end-line="254" selection-end-column="35" />
+          <folding>
+            <element signature="e#2066#2756#0" expanded="true" />
+            <element signature="e#2755#2756#0" expanded="true" />
+            <element signature="e#3669#3916#0" expanded="true" />
+            <element signature="e#3915#3916#0" expanded="true" />
+            <element signature="e#4550#5246#0" expanded="true" />
+            <element signature="e#5245#5246#0" expanded="true" />
+            <element signature="e#5288#6396#0" expanded="true" />
+            <element signature="e#6395#6396#0" expanded="true" />
+            <element signature="e#9018#9046#0" expanded="true" />
           </folding>
         </state>
       </provider>

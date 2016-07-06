@@ -2,7 +2,6 @@ package com.roadmapper.oauthtest;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.media.MediaMetadata;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,7 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -62,7 +61,7 @@ public class TrackRecyclerAdapter extends RecyclerView.Adapter<TrackRecyclerAdap
         //Log.i(TAG, track.artworkUrl);
         String artworkUrl = null;
         if (track.artworkUrl != null) {
-             artworkUrl = track.artworkUrl;//.replace("-large.jpg", "-crop.jpg");
+            artworkUrl = track.artworkUrl;//.replace("-large.jpg", "-crop.jpg");
         }
         //Log.i(TAG, track.artworkUrl);
         /*Picasso.with(context)
@@ -110,11 +109,16 @@ public class TrackRecyclerAdapter extends RecyclerView.Adapter<TrackRecyclerAdap
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        @Bind(R.id.cv) CardView cardView;
-        @Bind(R.id.artwork) ImageView artwork;
-        @Bind(R.id.trackname) TextView trackName;
-        @Bind(R.id.user) TextView user;
-        @Bind(R.id.duration) TextView duration;
+        @BindView(R.id.cv)
+        CardView cardView;
+        @BindView(R.id.artwork)
+        ImageView artwork;
+        @BindView(R.id.trackname)
+        TextView trackName;
+        @BindView(R.id.user)
+        TextView user;
+        @BindView(R.id.duration)
+        TextView duration;
 
         public ViewHolder(View view) {
             super(view);

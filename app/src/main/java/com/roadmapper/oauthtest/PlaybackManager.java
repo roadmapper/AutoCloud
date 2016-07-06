@@ -251,7 +251,7 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
 
             if (!TextUtils.isEmpty(streamUrl)) {
                 MusicLibrary.setSongStreamUri(trackId, streamUrl);
-                MediaMetadataCompat metadata = MusicLibrary.getMetadata(mContext, trackId);
+                MediaMetadataCompat metadata = MusicLibrary.getMetadata(trackId);
                 play(metadata);
             }
         }

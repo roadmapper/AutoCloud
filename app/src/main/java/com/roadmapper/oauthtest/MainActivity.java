@@ -39,7 +39,7 @@ import com.squareup.picasso.Target;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -58,26 +58,26 @@ public class MainActivity extends AppCompatActivity {
 
     //@Bind(R.id.activityButton)
     //Button getActivityButton;
-    @Bind(R.id.swipeContainer)
+    @BindView(R.id.swipeContainer)
     SwipeRefreshLayout swipeContainer;
-    @Bind(R.id.play_pause)
+    @BindView(R.id.play_pause)
     ImageButton mPlayPause;
-    @Bind(R.id.title)
+    @BindView(R.id.title)
     TextView mTitle;
-    @Bind(R.id.artist)
+    @BindView(R.id.artist)
     TextView mSubtitle;
-    @Bind(R.id.album_art)
+    @BindView(R.id.album_art)
     ImageView mAlbumArt;
-    @Bind(R.id.playback_controls)
+    @BindView(R.id.playback_controls)
     ViewGroup mPlaybackControls;
-    @Bind(R.id.sb)
+    @BindView(R.id.sb)
     SeekBar seekBar;
 
     private MediaMetadataCompat mCurrentMetadata;
     private PlaybackStateCompat mCurrentState;
 
 
-    @Bind(R.id.tracks)
+    @BindView(R.id.tracks)
     //ListView trackListView;
             RecyclerView trackListView;
     ArrayList<Track> trackList = new ArrayList<>();
@@ -250,8 +250,9 @@ public class MainActivity extends AppCompatActivity {
     };
     private static Handler mHandler = new Handler();
 
-    private void updateMetadata(MediaMetadataCompat metadata) {
+    private void updateMetadata(final MediaMetadataCompat metadata) {
         mCurrentMetadata = metadata;
+        final MediaMetadataCompat meta = metadata;
         mTitle.setText(metadata == null ? "" : metadata.getDescription().getTitle());
         mSubtitle.setText(metadata == null ? "" : metadata.getDescription().getSubtitle());
 
@@ -285,6 +286,7 @@ public class MainActivity extends AppCompatActivity {
                                             mAlbumArt.setImageBitmap(icon);
                                         //}
                                     }
+                                    MusicLibrary.updateMusicArt(meta.getDescription().getMediaId(), bitmap, icon);
                                 }
                             }
                     );
@@ -466,7 +468,7 @@ public class MainActivity extends AppCompatActivity {
                     state == PlaybackState.STATE_NONE) {
 
                 if (mCurrentMetadata == null) {
-                    mCurrentMetadata = MusicLibrary.getMetadata(MainActivity.this,
+                    mCurrentMetadata = MusicLibrary.getMetadata(
                             MusicLibrary.getMediaItems().get(0).getMediaId());
                     updateMetadata(mCurrentMetadata);
                 }

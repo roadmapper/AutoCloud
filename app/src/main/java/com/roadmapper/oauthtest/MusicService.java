@@ -140,7 +140,7 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
 
             if (!TextUtils.isEmpty(streamUrl)) {
                 MusicLibrary.setSongStreamUri(trackId, streamUrl);
-                MediaMetadataCompat metadata = MusicLibrary.getMetadata(MusicService.this, trackId);
+                MediaMetadataCompat metadata = MusicLibrary.getMetadata(trackId);
                 mSession.setActive(true);
                 mSession.setMetadata(metadata);
                 mPlayback.play(metadata);
@@ -164,7 +164,7 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
         @Override
         public void onPlayFromMediaId(String mediaId, Bundle extras) {
             /*mSession.setActive(true);*/
-            MediaMetadataCompat metadata = MusicLibrary.getMetadata(MusicService.this, mediaId);
+            MediaMetadataCompat metadata = MusicLibrary.getMetadata(mediaId);
 
 
 // TODO: Don't want to always call the API to get the URL if we have cached it
