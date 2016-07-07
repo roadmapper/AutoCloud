@@ -9,7 +9,7 @@ android {
         applicationId "com.roadmapper.oauthtest"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 6
+        versionCode 8
         versionName "1.0"
     }
     buildTypes {

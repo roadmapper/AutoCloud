@@ -4,18 +4,28 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.media.MediaMetadata;
 import android.media.session.PlaybackState;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaBrowserCompat.MediaItem;
 import android.support.v4.media.MediaBrowserServiceCompat;
+import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -86,10 +96,13 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
     private BroadcastReceiver mCarConnectionReceiver;
     private boolean mIsConnectedToCar;
     private MediaNotificationManager2 mediaNotificationManager;
+    private PackageValidator mPackageValidator;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        mPackageValidator = new PackageValidator(this);
 
         mSession = new MediaSessionCompat(this, "MusicService");
         setSessionToken(mSession.getSessionToken());
@@ -120,12 +133,65 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
 
     @Override
     public BrowserRoot onGetRoot(String clientPackageName, int clientUid, Bundle rootHints) {
-        return new BrowserRoot(getString(R.string.app_name), null);
+        Log.d(TAG, "OnGetRoot: clientPackageName=" + clientPackageName +
+                "; clientUid=" + clientUid + " ; rootHints=" + rootHints);
+        // To ensure you are not allowing any arbitrary app to browse your app's contents, you
+        // need to check the origin:
+        if (!mPackageValidator.isCallerAllowed(this, clientPackageName, clientUid)) {
+            // If the request comes from an untrusted package, return null. No further calls will
+            // be made to other media browsing methods.
+            Log.w(TAG, "OnGetRoot: IGNORING request from untrusted package "
+                    + clientPackageName);
+            return null;
+        }
+
+        return new BrowserRoot("ROOT", null);
     }
 
     @Override
-    public void onLoadChildren(final String parentMediaId, final Result<List<MediaItem>> result) {
-        result.sendResult(MusicLibrary.getMediaItems());
+    public void onLoadChildren(@NonNull final String parentMediaId, @NonNull final Result<List<MediaItem>> result) {
+        /*Log.d(TAG, "OnLoadChildren: parentMediaId=" + parentMediaId);
+        if (mMusicProvider.isInitialized()) {
+            // if music library is ready, return immediately
+            result.sendResult(mMusicProvider.getChildren(parentMediaId, getResources()));
+        } else {
+            // otherwise, only return results when the music library is retrieved
+            result.detach();
+            mMusicProvider.retrieveMediaAsync(new MusicProvider.Callback() {
+                @Override
+                public void onMusicCatalogReady(boolean success) {
+                    result.sendResult(mMusicProvider.getChildren(parentMediaId, getResources()));
+                }
+            });
+        }*/
+
+        if ("ROOT".equals(parentMediaId)) {
+            Drawable vectorDrawable = ContextCompat.getDrawable(this, R.drawable.ic_heart);
+            Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
+                    vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            vectorDrawable.draw(canvas);
+
+            // build the media items at the top level and then put in the result list
+            MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
+                    .setMediaId("LIKES")
+                    .setTitle("Likes")
+                    .setIconBitmap(bitmap)
+                    /*.setIconUri(Uri.parse("android.resource://" +
+                            "com.roadmapper.oauthtest/drawable/ic_heart"))*/
+                    .build();
+            MediaItem item = new MediaBrowserCompat.MediaItem(description,
+                    MediaBrowserCompat.MediaItem.FLAG_BROWSABLE);
+            List<MediaItem> arr = new ArrayList<>();
+            arr.add(item);
+            result.sendResult(arr);
+        } else {
+            // examine the passed in parentMediaId to see which submenu we are at
+            result.sendResult(MusicLibrary.getMediaItems());
+        }
+
+
     }
 
     private Callback<ResponseBody> streamUrlCallback = new Callback<ResponseBody>() {
