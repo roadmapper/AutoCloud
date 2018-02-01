@@ -35,8 +35,11 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        String code = SharedPrefManager.getInstance().readSharedPrefString(R.string.oauth_token);
-        String scope = SharedPrefManager.getInstance().readSharedPrefString(R.string.oauth_scope);
+
+        String code = AutoCloudApplication.OAUTH_TOKEN_WEB;
+        //String code = SharedPrefManager.getInstance().readSharedPrefString(R.string.oauth_token);
+        //String scope = SharedPrefManager.getInstance().readSharedPrefString(R.string.oauth_scope);
+        String scope = "*";
 
         if (!"".equals(code) && !"".equals(scope)) {
             Intent intent = new Intent(this, MainActivity.class);

@@ -2,6 +2,9 @@ package com.roadmapper.oauthtest.entities;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * The track metadata.
+ */
 public class Track {
 
      @SerializedName("kind")

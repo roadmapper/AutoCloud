@@ -6,15 +6,18 @@ import android.support.annotation.StringRes;
 
 public class SharedPrefManager {
 
-    private static SharedPrefManager instance = null;
-    private static Context context = AutoCloudApplication.getAppContext();
-    private static SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.app_prefs), Context.MODE_PRIVATE);
+    private static SharedPrefManager instance;
+    private Context context;
+    private static SharedPreferences sharedPref;
 
-    private SharedPrefManager() {}
+    private SharedPrefManager(Context context) {
+        this.context = context;
+        sharedPref = context.getSharedPreferences(context.getString(R.string.app_prefs), Context.MODE_PRIVATE);
+    }
 
     public static SharedPrefManager getInstance() {
         if (instance == null) {
-            instance = new SharedPrefManager();
+            instance = new SharedPrefManager(AutoCloudApplication.getAppContext());
         }
         return instance;
     }

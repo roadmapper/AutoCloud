@@ -4,13 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.media.MediaMetadata;
-import android.media.session.PlaybackState;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
@@ -20,10 +17,15 @@ import android.support.v4.media.MediaBrowserCompat.MediaItem;
 import android.support.v4.media.MediaBrowserServiceCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.RatingCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.roadmapper.oauthtest.entities.TrackUrn;
+import com.roadmapper.oauthtest.entities.Urls;
+import com.roadmapper.oauthtest.entities.UserProfile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -164,12 +166,33 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
                 }
             });
         }*/
+        Log.d(TAG, "onLoadChildren");
+        Log.d(TAG, "mediaId: " + parentMediaId);
 
         if ("ROOT".equals(parentMediaId)) {
-            Drawable vectorDrawable = ContextCompat.getDrawable(this, R.drawable.ic_heart);
+            Drawable vectorDrawable = null;
+
+            int currentNightMode = getResources().getConfiguration().uiMode
+                    & Configuration.UI_MODE_NIGHT_MASK;
+            if (currentNightMode == Configuration.UI_MODE_NIGHT_NO) {
+
+                // Night mode is not active, we're in day time
+                vectorDrawable = ContextCompat.getDrawable(this, R.drawable.ic_heart);
+            }
+            if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+                // Night mode is active, we're at night!
+                vectorDrawable = ContextCompat.getDrawable(this, R.drawable.ic_heart_night);
+            }
+            if (currentNightMode == Configuration.UI_MODE_NIGHT_UNDEFINED) {
+                // We don't know what mode we're in, assume notnight
+                vectorDrawable = ContextCompat.getDrawable(this, R.drawable.ic_heart);
+            }
+
             Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
                     vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+
             Canvas canvas = new Canvas(bitmap);
+
             vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
             vectorDrawable.draw(canvas);
 
@@ -183,12 +206,59 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
                     .build();
             MediaItem item = new MediaBrowserCompat.MediaItem(description,
                     MediaBrowserCompat.MediaItem.FLAG_BROWSABLE);
+
+            // build the media items at the top level and then put in the result list
+            MediaDescriptionCompat description2 = new MediaDescriptionCompat.Builder()
+                    .setMediaId("STREAM")
+                    .setTitle("Stream")
+                    //.setIconBitmap(bitmap)
+                    /*.setIconUri(Uri.parse("android.resource://" +
+                            "com.roadmapper.oauthtest/drawable/ic_heart"))*/
+                    .build();
+            MediaItem item2 = new MediaBrowserCompat.MediaItem(description2,
+                    MediaBrowserCompat.MediaItem.FLAG_BROWSABLE);
+
             List<MediaItem> arr = new ArrayList<>();
             arr.add(item);
+            arr.add(item2);
             result.sendResult(arr);
         } else {
             // examine the passed in parentMediaId to see which submenu we are at
-            result.sendResult(MusicLibrary.getMediaItems());
+            Log.d(TAG, "parent: " + parentMediaId);
+
+
+            if ("STREAM".equals(parentMediaId)) {
+                if (MusicLibrary.isInitialized()) {
+                    // if music library is ready, return immediately
+                    result.sendResult(MusicLibrary.getMediaItems(parentMediaId));
+                } else {
+                    // otherwise, only return results when the music library is retrieved
+                    result.detach();
+                    MusicLibrary.retrieveMediaAsync(new MusicLibrary.Callback() {
+                        @Override
+                        public void onMusicCatalogReady(boolean success) {
+                            result.sendResult(MusicLibrary.getMediaItems(parentMediaId));
+                        }
+                    });
+                }
+            } else if ("LIKES".equals(parentMediaId)) {
+                if (MusicLibrary.isInitialized()) {
+                    // if music library is ready, return immediately
+                    result.sendResult(MusicLibrary.getMediaItems(parentMediaId));
+                } else {
+                    // otherwise, only return results when the music library is retrieved
+                    result.detach();
+                    MusicLibrary.retrieveMediaAsync(new MusicLibrary.Callback() {
+                        @Override
+                        public void onMusicCatalogReady(boolean success) {
+                            result.sendResult(MusicLibrary.getMediaItems(parentMediaId));
+                        }
+                    });
+                }
+            }
+
+            //result.sendResult(MusicLibrary.getMediaItems());
+
         }
 
 
@@ -197,12 +267,63 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
     private Callback<ResponseBody> streamUrlCallback = new Callback<ResponseBody>() {
         @Override
         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            List<String> url = call.request().url().pathSegments();
+            String trackId = url.get(url.indexOf("tracks") + 1);
+            String streamUrl;
+            okhttp3.Headers headers = response.headers();
+            streamUrl = headers.get("Location");
+            Log.d(TAG, "HEADERS: " + headers);
+            Log.d(TAG, "url: " + streamUrl);
 
+            if (!TextUtils.isEmpty(streamUrl)) {
+                MusicLibrary.setSongStreamUri(trackId, streamUrl);
+                MediaMetadataCompat metadata = MusicLibrary.getMetadata(trackId);
+                mSession.setActive(true);
+                mSession.setMetadata(metadata);
+                mPlayback.play(metadata);
+
+                TrackUrn urn = new TrackUrn();
+                urn.track_urn = "soundcloud:tracks:" + trackId;
+                SoundCloud2Client client2 = ServiceGenerator.createService(SoundCloud2Client.class);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
+                Call<ResponseBody> update = client2.updatePlayHistory(AutoCloudApplication.CLIENT_ID_WEB, urn);
+                update.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        Log.d(TAG, "updated play history: " + response.toString());
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.d(TAG, "failed to update play history", t);
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void onFailure(Call<ResponseBody> call, Throwable t) {
+            Log.d("MusicService", "Failure");
+            Log.d("MusicService", t.getMessage());
+        }
+    };
+
+    private Callback<Urls> streamUrlCallback2 = new Callback<Urls>() {
+        @Override
+        public void onResponse(Call<Urls> call, Response<Urls> response) {
+            Urls urls = response.body();
             List<String> url = call.request().url().pathSegments();
             String trackId = url.get(url.indexOf("tracks") + 1);
             String streamUrl = null;
-            okhttp3.Headers headers = response.headers();
-            streamUrl = headers.get("Location");
+            //okhttp3.Headers headers = response.headers();
+            if (urls.hls_url != null) {
+                streamUrl = urls.hls_url;
+            } else {
+                streamUrl = urls.http_url;
+            }
+            //streamUrl = headers.get("Location");
+            //Log.d(TAG, "HEADERS: " + headers);
+            Log.d(TAG, "url: " + streamUrl);
+
 
             if (!TextUtils.isEmpty(streamUrl)) {
                 MusicLibrary.setSongStreamUri(trackId, streamUrl);
@@ -214,9 +335,9 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
         }
 
         @Override
-        public void onFailure(Call<ResponseBody> call, Throwable t) {
-            Log.d("MainActivity", "Failure");
-            Log.d("MainActivity", t.getMessage());
+        public void onFailure(Call<Urls> call, Throwable t) {
+            Log.d("MusicService", "Failure");
+            Log.d("MusicService", t.getMessage());
         }
     };
 
@@ -235,8 +356,12 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
 
 // TODO: Don't want to always call the API to get the URL if we have cached it
             SoundCloudClient client = ServiceGenerator.createService(SoundCloudClient.class);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
-            Call<ResponseBody> call = client.getStreamInfo(Long.parseLong(metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)));
+            Call<ResponseBody> call = client.getMediaStream(Long.parseLong(metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)));
             call.enqueue(streamUrlCallback);
+            //Call<Urls> call2 = client.getMediaStreams(Long.parseLong(metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)));
+            //call2.enqueue(streamUrlCallback2);
+
+
             /*mSession.setMetadata(metadata);
             mPlayback.play(metadata);*/
         }
@@ -259,6 +384,63 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
         @Override
         public void onSkipToPrevious() {
             onPlayFromMediaId(MusicLibrary.getPreviousSong(mPlayback.getCurrentMediaId()), null);
+        }
+
+        @Override
+        public void onCustomAction(@NonNull String action, Bundle extras) {
+            switch (action) {
+                case PlaybackManager.CUSTOM_ACTION_SKIP_FORWARD:
+                    //LogHelper.i(TAG, "onCustomAction: favorite for current track");
+            /*MediaSessionCompat.QueueItem currentMusic = mQueueManager.getCurrentMusic();
+            if (currentMusic != null) {
+                String mediaId = currentMusic.getDescription().getMediaId();
+                if (mediaId != null) {
+                    String musicId = MediaIDHelper.extractMusicIDFromMediaID(mediaId);
+                    mMusicProvider.setFavorite(musicId, !mMusicProvider.isFavorite(musicId));
+                }
+            }*/
+                    // playback state needs to be updated because the "Favorite" icon on the
+                    // custom action will change to reflect the new favorite state.
+                    //updatePlaybackState(null);
+                    mPlayback.skip(30 * 1000);
+                    break;
+                case PlaybackManager.CUSTOM_ACTION_LIKE:
+                    final String currentMusicId = mPlayback.getCurrentMedia().getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
+                    if (currentMusicId != null) {
+                        SoundCloudClient client = ServiceGenerator.createService(SoundCloudClient.class);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
+                        Call<UserProfile> call = client.getMe();
+                        call.enqueue(new Callback<UserProfile>() {
+                            @Override
+                            public void onResponse(Call<UserProfile> call, Response<UserProfile> response) {
+                                SoundCloud2Client client2 = ServiceGenerator.createService(SoundCloud2Client.class);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
+                                Call<ResponseBody> call2 = client2.likeTrack(response.body().id.toString(), currentMusicId, AutoCloudApplication.CLIENT_ID_WEB, "");
+                                call2.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call3, Response<ResponseBody> response) {
+                                        Log.d("MusicService", call3.request().url().toString());
+                                        Log.d("MusicService", response.message());
+                                        MusicLibrary.updateMusicRating(currentMusicId, RatingCompat.newHeartRating(true));
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onFailure(Call<UserProfile> call, Throwable t) {
+
+                            }
+                        });
+                        //}
+                    }
+                    break;
+                default:
+                    //LogHelper.e(TAG, "Unsupported action: ", action);
+                    break;
+            }
         }
     };
 
@@ -337,4 +519,6 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
             mSession.setMetadata(metadata);
         }
     }
+
+
 }

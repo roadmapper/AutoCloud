@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * Created by vinaydandekar on 2/21/16.
+ * The set of activities from a SoundCloud user stream.
  */
 public class AffiliatedActivities {
 

@@ -17,10 +17,10 @@ package com.roadmapper.oauthtest;
 
 import android.content.Context;
 import android.media.AudioManager;
-import android.media.MediaMetadata;
 import android.media.MediaPlayer;
 import android.media.session.PlaybackState;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.support.v4.media.MediaMetadataCompat;
@@ -55,6 +55,10 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
 
     private final Callback mCallback;
     private final AudioManager mAudioManager;
+
+    // Action to thumbs up a media item
+    protected static final String CUSTOM_ACTION_SKIP_FORWARD = "com.roadmapper.oauthtest.SKIP_FORWARD";
+    protected static final String CUSTOM_ACTION_LIKE = "com.roadmapper.oauthtest.LIKE";
 
     public PlaybackManager(Context context, Callback callback) {
         this.mContext = context;
@@ -178,6 +182,19 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
         releaseMediaPlayer();
     }
 
+    public void skip(int durationMilli) {
+        if (isPlaying()) {
+            // TODO: Not sure if this is necessary
+            //mState = PlaybackStateCompat.STATE_FAST_FORWARDING;
+            //updatePlaybackState();
+            Log.d("PlaybackManager", "Skip duration secs:" + durationMilli /1000);
+            Log.d("PlaybackManager", "current duration secs:" + mMediaPlayer.getCurrentPosition() / 1000);
+            Log.d("PlaybackManager", "final duration secs:" + (mMediaPlayer.getCurrentPosition() + durationMilli) /1000);
+            mMediaPlayer.seekTo(mMediaPlayer.getCurrentPosition() + durationMilli);
+            updatePlaybackState();
+        }
+    }
+
     /**
      * Try to get the system audio focus.
      */
@@ -235,7 +252,7 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
         //player.reset();
 
         SoundCloudClient client = ServiceGenerator.createService(SoundCloudClient.class);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
-        Call<ResponseBody> call = client.getStreamInfo(Long.parseLong(MusicLibrary.getNextSong(mCurrentMedia.getDescription().getMediaId())));
+        Call<ResponseBody> call = client.getMediaStream(Long.parseLong(MusicLibrary.getNextSong(mCurrentMedia.getDescription().getMediaId())));
         call.enqueue(streamUrlCallback);
     }
 
@@ -299,7 +316,7 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
         PlaybackStateCompat.Builder stateBuilder = new PlaybackStateCompat.Builder()
                 .setActions(getAvailableActions());
 
-        //setCustomAction(stateBuilder);
+        setCustomAction(stateBuilder);
         //int state = mPlayback.getState();
 
         // If there is an error message, send it to the playback state:
@@ -341,6 +358,41 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
         updatePlaybackState();
     }
 
+    private void setCustomAction(PlaybackStateCompat.Builder stateBuilder) {
+        //MediaSessionCompat.QueueItem currentMusic = mQueueManager.getCurrentMusic();
+        //if (currentMusic == null) {
+        //    return;
+        //}
+        // Set appropriate "Favorite" icon on Custom action:
+        /*String mediaId = currentMusic.getDescription().getMediaId();
+        if (mediaId == null) {
+            return;
+        }*/
+        //String musicId = MediaIDHelper.extractMusicIDFromMediaID(mediaId);
+        int skipIcon = R.drawable.ic_forward_30_black_48dp;
+        /*LogHelper.d(TAG, "updatePlaybackState, setting Favorite custom action of music ",
+                musicId, " current favorite=", mMusicProvider.isFavorite(musicId));*/
+        Bundle customActionExtras = new Bundle();
+        stateBuilder.addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
+                CUSTOM_ACTION_SKIP_FORWARD, "Forward 30", skipIcon)
+                .setExtras(customActionExtras)
+                .build());
+
+        int likeIcon = R.drawable.ic_heart;
+        int likeIcon2 = R.drawable.ic_radio_button_unchecked_black;
+
+        if (mCurrentMedia != null) {
+
+
+        if(mCurrentMedia.getRating(MediaMetadataCompat.METADATA_KEY_USER_RATING).hasHeart()) {
+        stateBuilder.addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
+                CUSTOM_ACTION_LIKE, "Unlike", likeIcon2).setExtras(customActionExtras).build());
+        } else {
+            stateBuilder.addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
+                    CUSTOM_ACTION_LIKE, "Like", likeIcon).setExtras(customActionExtras).build());
+        }}
+    }
+
     public interface Callback {
         void onPlaybackStart();
 
@@ -351,6 +403,8 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
         void onPlaybackStateUpdated(PlaybackStateCompat newState);
 
         void onMetadataUpdated(MediaMetadataCompat metadata);
+
+
     }
 
 }

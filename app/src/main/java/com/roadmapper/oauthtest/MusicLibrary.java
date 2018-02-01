@@ -18,23 +18,34 @@ package com.roadmapper.oauthtest;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.media.MediaMetadata;
-import android.media.browse.MediaBrowser;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.RatingCompat;
+import android.util.Log;
 
+import com.roadmapper.oauthtest.entities.Activity;
+import com.roadmapper.oauthtest.entities.AffiliatedActivities;
 import com.roadmapper.oauthtest.entities.Track;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import org.apache.commons.collections4.map.LinkedMap;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.Map;
 
-class MusicLibrary {
+import retrofit2.Call;
+import retrofit2.Response;
 
-    private static final TreeMap<String, MediaMetadataCompat> music = new TreeMap<>();
+/**
+ * The music library from SoundCloud.
+ */
+public class MusicLibrary {
+
+    private static final LinkedMap<String, MediaMetadataCompat> music = new LinkedMap<>();
+    private static final LinkedMap<String, MediaMetadataCompat> music2 = new LinkedMap<>();
     private static final HashMap<String, String> albumRes = new HashMap<>();
     private static final HashMap<String, String> musicRes = new HashMap<>();
     private static final HashMap<String, String> musicStreamRes = new HashMap<>();
@@ -94,11 +105,19 @@ class MusicLibrary {
         Picasso.with(ctx).load(url).into(target);
     }
 
-    public static List<MediaBrowserCompat.MediaItem> getMediaItems() {
+    public static List<MediaBrowserCompat.MediaItem> getMediaItems(String mediaId) {
         List<MediaBrowserCompat.MediaItem> result = new ArrayList<>();
-        for (MediaMetadataCompat metadata: music.values()) {
-            result.add(new MediaBrowserCompat.MediaItem(metadata.getDescription(),
-                    MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
+        Map<String, MediaMetadataCompat> items = null;
+        if ("STREAM".equals(mediaId)) {
+            items = music2;
+        } else if ("LIKES".equals(mediaId)) {
+            items = music;
+        }
+        if (items != null) {
+            for (MediaMetadataCompat metadata : items.values()) {
+                result.add(new MediaBrowserCompat.MediaItem(metadata.getDescription(),
+                        MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
+            }
         }
         return result;
     }
@@ -109,7 +128,7 @@ class MusicLibrary {
     }
 
     public static String getPreviousSong(String currentMediaId) {
-        String prevMediaId = music.lowerKey(currentMediaId);
+        String prevMediaId = music.previousKey(currentMediaId);
         if (prevMediaId == null) {
             prevMediaId = music.firstKey();
         }
@@ -117,7 +136,7 @@ class MusicLibrary {
     }
 
     public static String getNextSong(String currentMediaId) {
-        String nextMediaId = music.higherKey(currentMediaId);
+        String nextMediaId = music.nextKey(currentMediaId);
         if (nextMediaId == null) {
             nextMediaId = music.firstKey();
         }
@@ -146,13 +165,29 @@ class MusicLibrary {
         music.put(musicId, metadata);
     }
 
+    public static synchronized void updateMusicRating(String musicId, RatingCompat rating) {
+        MediaMetadataCompat metadata = getMetadata(musicId);
+        metadata = new MediaMetadataCompat.Builder(metadata)
+                .putRating(MediaMetadataCompat.METADATA_KEY_USER_RATING, rating)
+                .build();
+
+        music.put(musicId, metadata);
+    }
+
     public static MediaMetadataCompat getMetadata(String mediaId) {
+        Log.d("MusicLibrary", mediaId);
+        Log.d("MusicLibrary", music.keySet().toString());
+        Log.d("MusicLibrary", music2.keySet().toString());
         MediaMetadataCompat metadata = music.get(mediaId);
+        if (metadata == null) {
+            metadata = music2.get(mediaId);
+        }
+        Log.d("MusicLibrary", metadata.toString());
         Bitmap albumArt = null;
         //try {
-            //albumArt = getAlbumBitmap(mediaId);
+        //albumArt = getAlbumBitmap(mediaId);
         //} catch (IOException e) {
-            //Log.e("MusicLibrary", "Error getting bitmap");
+        //Log.e("MusicLibrary", "Error getting bitmap");
         //}
 
         // Since MediaMetadata is immutable, we need to create a copy to set the album art
@@ -173,32 +208,219 @@ class MusicLibrary {
     private static void createMediaMetadata(String mediaId, String title, String artist,
                                             String genre, long duration,
                                             String description,
-                                            String musicUrl, String albumArtUrl) {
+                                            String musicUrl, String albumArtUrl, boolean likes) {
         String hiResUrl = albumArtUrl.replace("-large.jpg", "-t500x500.jpg");
-        music.put(mediaId,
-                new MediaMetadataCompat.Builder()
-                        .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mediaId)
-                        //.putString(MediaMetadata.METADATA_KEY_ALBUM, album)
-                        .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
-                        .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, duration)
-                        .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, description)
-                        .putString(MediaMetadataCompat.METADATA_KEY_GENRE, genre)
-                        .putString(MediaMetadataCompat.METADATA_KEY_ART_URI, hiResUrl)
-                        .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, hiResUrl)
-                        .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, albumArtUrl)
-                        .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
-                        .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, artist)
-                        .build());
+        if (likes) {
+            music.put(mediaId,
+                    new MediaMetadataCompat.Builder()
+                            .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mediaId)
+                            //.putString(MediaMetadata.METADATA_KEY_ALBUM, album)
+                            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
+                            .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, duration)
+                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, description)
+                            .putString(MediaMetadataCompat.METADATA_KEY_GENRE, genre)
+                            .putString(MediaMetadataCompat.METADATA_KEY_ART_URI, hiResUrl)
+                            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, hiResUrl)
+                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, albumArtUrl)
+                            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
+                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, artist)
+                            .putRating(MediaMetadataCompat.METADATA_KEY_USER_RATING, RatingCompat.newHeartRating(true))
+                            .build());
+        } else {
+            music2.put(mediaId,
+                    new MediaMetadataCompat.Builder()
+                            .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mediaId)
+                            //.putString(MediaMetadata.METADATA_KEY_ALBUM, album)
+                            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
+                            .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, duration)
+                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, description)
+                            .putString(MediaMetadataCompat.METADATA_KEY_GENRE, genre)
+                            .putString(MediaMetadataCompat.METADATA_KEY_ART_URI, hiResUrl)
+                            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, hiResUrl)
+                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, albumArtUrl)
+                            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
+                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, artist)
+                            .putRating(MediaMetadataCompat.METADATA_KEY_USER_RATING, RatingCompat.newHeartRating(false))
+                            .build());
+        }
         //Log.d("MusicLibrary", albumArtUrl);
         albumRes.put(mediaId, albumArtUrl);
         musicRes.put(mediaId, musicUrl);
     }
 
-    public static void createMediaMetadata(Track track) {
-        //Log.d("MusicLibrary", track.toString());
-        //Log.d("MusicLibrary", track.artworkUrl);
+    /**
+     * Create track metadata for music hierarchy from a SoundCloud {@link Track}.
+     *
+     * @param track the SoundCloud track
+     * @param likes if the track is in the user's likes feed
+     */
+    public static void createMediaMetadata(Track track, boolean likes) {
         createMediaMetadata(track.id.toString(), track.title, track.user.username,
                 track.genre, track.duration, track.description,
-                track.streamUrl, track.artworkUrl != null ? track.artworkUrl : "");
+                track.streamUrl, track.artworkUrl != null ? track.artworkUrl : "", likes);
+    }
+
+    /**
+     * Get the list of music tracks from a server and caches the track information
+     * for future reference, keying tracks by musicId and grouping by genre.
+     */
+    public static void retrieveMediaAsync(final Callback callback) {
+        Log.d("MusicLibrary", "retrieveMediaAsync called");
+        if (currentState == State.INITIALIZED) {
+            if (callback != null) {
+                // Nothing to do, execute callback immediately
+                callback.onMusicCatalogReady(true);
+            }
+            return;
+        }
+
+        String code = SharedPrefManager.getInstance().readSharedPrefString(R.string.oauth_token);
+        String scope = SharedPrefManager.getInstance().readSharedPrefString(R.string.oauth_scope);
+
+        if (!"".equals(code) && !"".equals(scope)) {
+            AccessToken token = new AccessToken(code, scope);
+            SoundCloudClient client = ServiceGenerator.createService(SoundCloudClient.class, token);
+
+            // Asynchronously load the music catalog in a separate thread
+            Call<List<Track>> call = client.getMyFavorites(100);
+            call.enqueue(new retrofit2.Callback<List<Track>>() {
+                @Override
+                public void onResponse(Call<List<Track>> call, Response<List<Track>> response) {
+                    Log.d("MusicLibrary", response.message());
+                    Log.d("MusicLibrary", response.code() + "");
+                    Log.d("MusicLibrary", response.headers().toString());
+                    List<Track> tracks = response.body();
+                    if (tracks != null) {
+                        for (Track track : tracks) {
+                            Log.d("MusicLibrary",
+                                    track.user.username + " (" + track.title + ")");
+                            createMediaMetadata(track, true);
+                        }
+                    }
+                    currentState = State.INITIALIZED;
+                    callback.onMusicCatalogReady(currentState == State.INITIALIZED);
+                }
+
+                @Override
+                public void onFailure(Call<List<Track>> call, Throwable t) {
+                    Log.d("MusicLibrary", "Failure");
+                    Log.d("MusicLibrary", t.getMessage());
+                    currentState = State.NON_INITIALIZED;
+                    callback.onMusicCatalogReady(currentState == State.INITIALIZED);
+                }
+            });
+
+            Call<AffiliatedActivities> call2 = client.getStreamTracks(100);
+            call2.enqueue(new retrofit2.Callback<AffiliatedActivities>() {
+                @Override
+                public void onResponse(Call<AffiliatedActivities> call, Response<AffiliatedActivities> response) {
+                    Log.d("MusicLibrary", response.message());
+                    Log.d("MusicLibrary", response.code() + "");
+                    Log.d("MusicLibrary", response.headers().toString());
+                    List<Activity> activities = response.body().collection;
+                    if (activities != null) {
+                        //trackList.clear();
+                        for (Activity activity : activities) {
+                            // activity.origin can be null, we don't want to show type playlist, unable to extract data out of that currently
+                            if (activity.origin != null && !activity.type.equals("playlist")) {
+                                Log.d("MusicLibrary",
+                                        activity.origin.user.username + " (" + activity.origin.title + ")");
+                                //trackList.add(activity.origin);
+                                MusicLibrary.createMediaMetadata(activity.origin, false);
+                            }
+                        }
+                        //trackAdapter.notifyDataSetChanged();
+                    }
+
+
+                }
+
+                @Override
+                public void onFailure(Call<AffiliatedActivities> call, Throwable t) {
+                    Log.d("MusicLibrary", "Failure");
+                    Log.d("MusicLibrary", t.getMessage());
+                }
+            });
+            currentState = State.INITIALIZING;
+
+
+        } else {
+            if (callback != null) {
+                callback.onMusicCatalogReady(currentState == State.INITIALIZED);
+            }
+        }
+    }
+
+    /**
+     * Get the list of music tracks from a server and caches the track information
+     * for future reference, keying tracks by musicId and grouping by genre.
+     */
+    public static void retrieveMediaAsync2(final Callback callback) {
+        Log.d("MusicLibrary", "retrieveMediaAsync2 called");
+        if (currentState == State.INITIALIZED) {
+            if (callback != null) {
+                // Nothing to do, execute callback immediately
+                callback.onMusicCatalogReady(true);
+            }
+            return;
+        }
+
+        String code = SharedPrefManager.getInstance().readSharedPrefString(R.string.oauth_token);
+        String scope = SharedPrefManager.getInstance().readSharedPrefString(R.string.oauth_scope);
+
+        if (!"".equals(code) && !"".equals(scope)) {
+            AccessToken token = new AccessToken(code, scope);
+            SoundCloudClient client = ServiceGenerator.createService(SoundCloudClient.class, token);
+
+            // Asynchronously load the music catalog in a separate thread
+            Call<AffiliatedActivities> call = client.getStreamTracks(100);
+            call.enqueue(new retrofit2.Callback<AffiliatedActivities>() {
+                @Override
+                public void onResponse(Call<AffiliatedActivities> call, Response<AffiliatedActivities> response) {
+                    Log.d("MusicLibrary", response.message());
+                    Log.d("MusicLibrary", response.code() + "");
+                    Log.d("MusicLibrary", response.headers().toString());
+                    List<Activity> activities = response.body().collection;
+                    if (activities != null) {
+                        //trackList.clear();
+                        for (Activity activity : activities) {
+                            Log.d("MainActivity",
+                                    activity.origin.user.username + " (" + activity.origin.title + ")");
+                            //trackList.add(activity.origin);
+                            MusicLibrary.createMediaMetadata(activity.origin, false);
+                        }
+                        //trackAdapter.notifyDataSetChanged();
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<AffiliatedActivities> call, Throwable t) {
+                    Log.d("MainActivity", "Failure");
+                    Log.d("MainActivity", t.getMessage());
+                }
+            });
+            currentState = State.INITIALIZING;
+
+
+        } else {
+            if (callback != null) {
+                callback.onMusicCatalogReady(currentState == State.INITIALIZED);
+            }
+        }
+    }
+
+    private enum State {
+        NON_INITIALIZED, INITIALIZING, INITIALIZED
+    }
+
+    static boolean isInitialized() {
+        return currentState == State.INITIALIZED;
+    }
+
+    private static volatile State currentState = State.NON_INITIALIZED;
+
+    public interface Callback {
+        void onMusicCatalogReady(boolean success);
     }
 }

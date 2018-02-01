@@ -275,7 +275,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
         Uri streamUri = Uri.parse(streamUrl);
         long trackId = Long.valueOf(streamUri.getPathSegments().get(1));
 
-        //Api.getService(Api.getEndpointUrl()).getStreamInfo(trackId, mGetStreamInfoCallback);
+        //Api.getService(Api.getEndpointUrl()).getMediaStream(trackId, mGetStreamInfoCallback);
 
         String code = SharedPrefManager.getInstance().readSharedPrefString(R.string.oauth_token);
         String scope = SharedPrefManager.getInstance().readSharedPrefString(R.string.oauth_scope);
@@ -285,7 +285,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
 
         SoundCloudClient client = ServiceGenerator.createService(SoundCloudClient.class, token);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
-        Call<ResponseBody> call = client.getStreamInfo(trackId);
+        Call<ResponseBody> call = client.getMediaStream(trackId);
         call.enqueue(callback);*/
 
         mMediaBrowser = new MediaBrowser(this,

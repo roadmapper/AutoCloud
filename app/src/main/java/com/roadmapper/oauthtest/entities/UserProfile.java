@@ -3,12 +3,12 @@ package com.roadmapper.oauthtest.entities;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by vinaydandekar on 2/21/16.
+ * A SoundCloud user profile associated with a sound.
  */
 public class UserProfile {
 
     @SerializedName("id")
-    Long id;
+    public Long id;
     @SerializedName("kind")
     String kind;
     @SerializedName("permalink")
@@ -57,4 +57,14 @@ public class UserProfile {
     Integer followersCount;
     @SerializedName("followings_count")
     Integer followingsCount;
+
+    // mini version of user profile in tracks listing
+    /*id: 237200,
+    kind: "user",
+    permalink: "anjunabeats",
+    username: "Anjunabeats",
+    last_modified: "2016/11/04 12:46:58 +0000",
+    uri: "https://api.soundcloud.com/users/237200",
+    permalink_url: "http://soundcloud.com/anjunabeats",
+    avatar_url: "https://i1.sndcdn.com/avatars-000275637550-gjn2gq-large.jpg"*/
 }

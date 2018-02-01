@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.media.MediaMetadata;
-import android.media.browse.MediaBrowser;
-import android.media.session.MediaController;
 import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,9 +20,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -96,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("MainActivity",
                             activity.origin.user.username + " (" + activity.origin.title + ")");
                     trackList.add(activity.origin);
-                    MusicLibrary.createMediaMetadata(activity.origin);
+                    MusicLibrary.createMediaMetadata(activity.origin, false);
                 }
                 trackAdapter.notifyDataSetChanged();
             }
@@ -109,6 +108,19 @@ public class MainActivity extends AppCompatActivity {
             Log.d("MainActivity", t.getMessage());
         }
     };
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //menu.add(0,0,0,"Exo");
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //Intent intent = new Intent(this, ExoPlayerActivity.class);
+        //startActivity(intent);
+        return true;
+    }
 
     private Callback<List<Track>> callback2 = new Callback<List<Track>>() {
         @Override
@@ -124,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("MainActivity",
                             track.user.username + " (" + track.title + ")");
                     //trackList.add(activity.origin);
-                    MusicLibrary.createMediaMetadata(track);
+                    MusicLibrary.createMediaMetadata(track, true);
                 }
                 trackAdapter.notifyDataSetChanged();
 
@@ -154,13 +166,13 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         mediaController = new MediaControllerCompat(
                                 MainActivity.this, mMediaBrowser.getSessionToken());
+                        updatePlaybackState(mediaController.getPlaybackState());
+                        updateMetadata(mediaController.getMetadata());
+                        mediaController.registerCallback(mMediaControllerCallback);
+                        MediaControllerCompat.setMediaController(MainActivity.this, mediaController);
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
-                    updatePlaybackState(mediaController.getPlaybackState());
-                    updateMetadata(mediaController.getMetadata());
-                    mediaController.registerCallback(mMediaControllerCallback);
-                    setSupportMediaController(mediaController);
                 }
             };
 
@@ -219,7 +231,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            if (getMediaController().getPlaybackState() != null || getMediaController().getPlaybackState().getState() == PlaybackState.ACTION_PLAY) {
+            if (getMediaController().getPlaybackState() != null ||
+                    (getMediaController().getPlaybackState() != null
+                            && getMediaController().getPlaybackState().getState()
+                            == PlaybackState.STATE_PLAYING)) {
 
                 //set max value
                 long mDuration = getMediaController().getMetadata().getLong(MediaMetadata.METADATA_KEY_DURATION);
@@ -458,6 +473,16 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("MainActivity", "Activity onStop");
+        /*if (getSupportMediaController() != null) {
+            getSupportMediaController().unregisterCallback(mMediaControllerCallback);
+        }
+        mMediaBrowser.disconnect();*/
+    }
+
     private final View.OnClickListener mPlaybackButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -469,7 +494,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (mCurrentMetadata == null) {
                     mCurrentMetadata = MusicLibrary.getMetadata(
-                            MusicLibrary.getMediaItems().get(0).getMediaId());
+                            MusicLibrary.getMediaItems("LIKES").get(0).getMediaId());
                     updateMetadata(mCurrentMetadata);
                 }
                 getMediaController().getTransportControls().playFromMediaId(
@@ -508,7 +533,7 @@ public class MainActivity extends AppCompatActivity {
 
                 token = new AccessToken(AutoCloudApplication.OAUTH_TOKEN_WEB, scope);
                 client = ServiceGenerator.createService(SoundCloudClient.class, token);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
-                //SharedPrefManager.getInstance().writeSharedPrefString(R.string.oauth_token, atoken);
+                SharedPrefManager.getInstance().writeSharedPrefString(R.string.oauth_token, AutoCloudApplication.OAUTH_TOKEN_WEB);
                 SharedPrefManager.getInstance().writeSharedPrefString(R.string.oauth_scope, scope);
 
 
