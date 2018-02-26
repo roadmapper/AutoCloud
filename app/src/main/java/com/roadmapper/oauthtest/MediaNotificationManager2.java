@@ -418,7 +418,8 @@ public class MediaNotificationManager2 extends BroadcastReceiver {
                     // If the media is still the same, update the notification:
                     Log.d(TAG, "fetchBitmapFromURLAsync: set bitmap to " + artUrl);
                     builder.setLargeIcon(bitmap);
-                    MusicLibrary.updateMusicArt(metadata.getDescription().getMediaId(), bitmap, icon);
+                    mService.onMetadataUpdated(MusicLibrary.updateMusicArt(
+                            metadata.getDescription().getMediaId(), bitmap, icon));
                     mNotificationManager.notify(NOTIFICATION_ID, builder.build());
                     Log.d(TAG, "ID " + NOTIFICATION_ID + " updated with new album artwork.");
                 }

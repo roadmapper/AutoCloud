@@ -276,27 +276,8 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
             Log.d(TAG, "url: " + streamUrl);
 
             if (!TextUtils.isEmpty(streamUrl)) {
-                MusicLibrary.setSongStreamUri(trackId, streamUrl);
-                MediaMetadataCompat metadata = MusicLibrary.getMetadata(trackId);
-                mSession.setActive(true);
-                mSession.setMetadata(metadata);
-                mPlayback.play(metadata);
-
-                TrackUrn urn = new TrackUrn();
-                urn.track_urn = "soundcloud:tracks:" + trackId;
-                SoundCloud2Client client2 = ServiceGenerator.createService(SoundCloud2Client.class);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
-                Call<ResponseBody> update = client2.updatePlayHistory(AutoCloudApplication.CLIENT_ID_WEB, urn);
-                update.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        Log.d(TAG, "updated play history: " + response.toString());
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.d(TAG, "failed to update play history", t);
-                    }
-                });
+                MediaMetadataCompat metadata = MusicLibrary.updateMusicUri(trackId, streamUrl);
+                setSessionMetadataAndPlay(metadata);
             }
         }
 
@@ -307,6 +288,33 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
         }
     };
 
+    private void setSessionMetadataAndPlay(MediaMetadataCompat metadata) {
+        String currentId = mPlayback.getCurrentMediaId();
+        String metadataId = metadata.getDescription().getMediaId();
+
+        mSession.setActive(true);
+        mSession.setMetadata(metadata);
+        mPlayback.play(metadata);
+
+        if (!metadataId.equals(currentId)) {
+            TrackUrn urn = new TrackUrn();
+            urn.track_urn = "soundcloud:tracks:" + metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
+            SoundCloud2Client client2 = ServiceGenerator.createService(SoundCloud2Client.class);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
+            Call<ResponseBody> update = client2.updatePlayHistory(AutoCloudApplication.CLIENT_ID_WEB, urn);
+            update.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    Log.d(TAG, "updated play history: " + response.toString());
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.d(TAG, "failed to update play history", t);
+                }
+            });
+        }
+    }
+
     private Callback<Urls> streamUrlCallback2 = new Callback<Urls>() {
         @Override
         public void onResponse(Call<Urls> call, Response<Urls> response) {
@@ -314,23 +322,22 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
             List<String> url = call.request().url().pathSegments();
             String trackId = url.get(url.indexOf("tracks") + 1);
             String streamUrl = null;
-            //okhttp3.Headers headers = response.headers();
-            if (urls.hls_url != null) {
-                streamUrl = urls.hls_url;
+            if (urls == null) {
+                mSession.setPlaybackState(new PlaybackStateCompat.Builder().setState(
+                        PlaybackStateCompat.STATE_ERROR, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 0).build());
             } else {
+                //if (urls.hls_url != null) {
+                //    streamUrl = urls.hls_url;
+                //} else {
                 streamUrl = urls.http_url;
-            }
-            //streamUrl = headers.get("Location");
-            //Log.d(TAG, "HEADERS: " + headers);
-            Log.d(TAG, "url: " + streamUrl);
+                //}
+                Log.d(TAG, "url: " + streamUrl);
 
 
-            if (!TextUtils.isEmpty(streamUrl)) {
-                MusicLibrary.setSongStreamUri(trackId, streamUrl);
-                MediaMetadataCompat metadata = MusicLibrary.getMetadata(trackId);
-                mSession.setActive(true);
-                mSession.setMetadata(metadata);
-                mPlayback.play(metadata);
+                if (!TextUtils.isEmpty(streamUrl)) {
+                    MediaMetadataCompat metadata = MusicLibrary.updateMusicUri(trackId, streamUrl);
+                    setSessionMetadataAndPlay(metadata);
+                }
             }
         }
 
@@ -351,15 +358,20 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
         @Override
         public void onPlayFromMediaId(String mediaId, Bundle extras) {
             /*mSession.setActive(true);*/
+            mSession.setPlaybackState(new PlaybackStateCompat.Builder().setState(PlaybackStateCompat.STATE_CONNECTING, 0, 0).build());
             MediaMetadataCompat metadata = MusicLibrary.getMetadata(mediaId);
+            // Don't want to always call the API to get the URL if we have cached it
+            if (metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI) != null) {
+                setSessionMetadataAndPlay(metadata);
+            } else {
+                SoundCloudClient client = ServiceGenerator.createService(SoundCloudClient.class);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
+                //Call<ResponseBody> call = client.getMediaStream(Long.parseLong(metadata.getString(
+                //        MediaMetadataCompat.METADATA_KEY_MEDIA_ID)));
+                //call.enqueue(streamUrlCallback);
+                Call<Urls> call2 = client.getMediaStreams(Long.parseLong(metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)));
+                call2.enqueue(streamUrlCallback2);
+            }
 
-
-// TODO: Don't want to always call the API to get the URL if we have cached it
-            SoundCloudClient client = ServiceGenerator.createService(SoundCloudClient.class);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
-            Call<ResponseBody> call = client.getMediaStream(Long.parseLong(metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)));
-            call.enqueue(streamUrlCallback);
-            //Call<Urls> call2 = client.getMediaStreams(Long.parseLong(metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)));
-            //call2.enqueue(streamUrlCallback2);
 
 
             /*mSession.setMetadata(metadata);
@@ -437,11 +449,110 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
                         //}
                     }
                     break;
+                case PlaybackManager.CUSTOM_ACTION_UNLIKE:
+                    final String currentMusicId2 = mPlayback.getCurrentMedia().getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
+                    if (currentMusicId2 != null) {
+                        SoundCloudClient client = ServiceGenerator.createService(SoundCloudClient.class);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
+                        Call<UserProfile> call = client.getMe();
+                        call.enqueue(new Callback<UserProfile>() {
+                            @Override
+                            public void onResponse(Call<UserProfile> call, Response<UserProfile> response) {
+                                SoundCloud2Client client2 = ServiceGenerator.createService(SoundCloud2Client.class);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
+                                Call<ResponseBody> call2 = client2.unlikeTrack(response.body().id.toString(), currentMusicId2, AutoCloudApplication.CLIENT_ID_WEB);
+                                call2.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call3, Response<ResponseBody> response) {
+                                        Log.d("MusicService", call3.request().url().toString());
+                                        Log.d("MusicService", response.message());
+                                        MusicLibrary.updateMusicRating(currentMusicId2, RatingCompat.newHeartRating(false));
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onFailure(Call<UserProfile> call, Throwable t) {
+
+                            }
+                        });
+                        //}
+                    }
+                    break;
                 default:
                     //LogHelper.e(TAG, "Unsupported action: ", action);
                     break;
             }
         }
+
+        /*@Override
+        public void onPlayFromSearch(String query, Bundle extras) {
+            boolean isArtistFocus = false;
+            boolean isAlbumFocus = false;
+
+            if (TextUtils.isEmpty(query)) {
+                // The user provided generic string e.g. 'Play music'
+                // Build appropriate playlist queue
+            } else {
+                // Build a queue based on songs that match "query" or "extras" param
+                String mediaFocus = extras.getString(MediaStore.EXTRA_MEDIA_FOCUS);
+                if (TextUtils.equals(mediaFocus,
+                        MediaStore.Audio.Artists.ENTRY_CONTENT_TYPE)) {
+                    isArtistFocus = true;
+                    artist = extras.getString(MediaStore.EXTRA_MEDIA_ARTIST);
+                } else if (TextUtils.equals(mediaFocus,
+                        MediaStore.Audio.Albums.ENTRY_CONTENT_TYPE)) {
+                    isAlbumFocus = true;
+                    album = extras.getString(MediaStore.EXTRA_MEDIA_ALBUM);
+                }
+                else {}
+
+                // Implement additional "extras" param filtering
+            }
+
+            // Implement your logic to retrieve the queue
+            if (isArtistFocus) {
+                result = searchMusicByArtist(artist);
+            } else if (isAlbumFocus) {
+                result = searchMusicByAlbum(album);
+            } else {
+                // No focus found, search by query for song title
+                //result = searchMusicBySongTitle(query);
+                SoundCloudClient client = ServiceGenerator.createService(SoundCloudClient.class);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
+                Call<List<Track>> call = client.getTracks(query);
+                call.enqueue(new Callback<List<Track>>() {
+
+                    @Override
+                    public void onResponse(Call<List<Track>> call, Response<List<Track>> response) {
+                        List<Track> tracks = response.body();
+                        if (tracks != null) {
+                            for (Track track : tracks) {
+                                Log.d("MusicLibrary",
+                                        track.user.username + " (" + track.title + ")");
+                                createMediaMetadata(track);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Track>> call, Throwable t) {
+
+                    }
+                }
+            }
+
+            if (result != null && !result.isEmpty()) {
+                // Immediately start playing from the beginning of the search results
+                // Implement your logic to start playing music
+                playMusic(result);
+            } else {
+                // Handle no queue found. Stop playing if the app
+                // is currently playing a song
+            }
+        }*/
     };
 
     private void registerCarConnectionReceiver() {

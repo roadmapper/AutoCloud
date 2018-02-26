@@ -18,6 +18,7 @@ package com.roadmapper.oauthtest;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.RatingCompat;
@@ -46,16 +47,17 @@ public class MusicLibrary {
 
     private static final LinkedMap<String, MediaMetadataCompat> music = new LinkedMap<>();
     private static final LinkedMap<String, MediaMetadataCompat> music2 = new LinkedMap<>();
+    private static final LinkedMap<String, MediaMetadataCompat> musicSearchMap = new LinkedMap<>();
     private static final HashMap<String, String> albumRes = new HashMap<>();
     private static final HashMap<String, String> musicRes = new HashMap<>();
     private static final HashMap<String, String> musicStreamRes = new HashMap<>();
     private static final HashMap<String, Bitmap> albumResBitmap = new HashMap<>();
 
     /*static {
-        createMediaMetadata("Jazz_In_Paris", "Jazz in Paris",
+        createAndAddMediaMetadata("Jazz_In_Paris", "Jazz in Paris",
                 "Media Right Productions", "Jazz & Blues", "Jazz", 103,
                 R.raw.jazz_in_paris, R.drawable.album_jazz_blues, "album_jazz_blues");
-        createMediaMetadata("The_Coldest_Shoulder",
+        createAndAddMediaMetadata("The_Coldest_Shoulder",
                 "The Coldest Shoulder", "The 126ers", "Youtube Audio Library Rock 2", "Rock", 160,
                 R.raw.the_coldest_shoulder, R.drawable.album_youtube_audio_library_rock_2,
                 "album_youtube_audio_library_rock_2");
@@ -69,7 +71,7 @@ public class MusicLibrary {
         return musicStreamRes.containsKey(mediaId) ? musicStreamRes.get(mediaId) : "";
     }
 
-    public static void setSongStreamUri(String mediaId, String musicStreamUrl) {
+    private static void setSongStreamUri(String mediaId, String musicStreamUrl) {
         musicStreamRes.put(mediaId, musicStreamUrl);
     }
 
@@ -147,10 +149,9 @@ public class MusicLibrary {
         music.put(musicId, metadata);
     }*/
 
-    public static synchronized void updateMusicArt(String musicId, Bitmap albumArt, Bitmap icon) {
+    public static synchronized MediaMetadataCompat updateMusicArt(String musicId, Bitmap albumArt, Bitmap icon) {
         MediaMetadataCompat metadata = getMetadata(musicId);
         metadata = new MediaMetadataCompat.Builder(metadata)
-
                 // set high resolution bitmap in METADATA_KEY_ALBUM_ART. This is used, for
                 // example, on the lockscreen background when the media session is active.
                 .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumArt)
@@ -159,19 +160,34 @@ public class MusicLibrary {
                 // the MediaDescription and thus it should be small to be serialized if
                 // necessary
                 .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, icon)
-
                 .build();
 
         music.put(musicId, metadata);
+        return metadata;
     }
 
-    public static synchronized void updateMusicRating(String musicId, RatingCompat rating) {
+    public static synchronized MediaMetadataCompat updateMusicRating(String musicId, RatingCompat rating) {
         MediaMetadataCompat metadata = getMetadata(musicId);
         metadata = new MediaMetadataCompat.Builder(metadata)
                 .putRating(MediaMetadataCompat.METADATA_KEY_USER_RATING, rating)
                 .build();
+        if (rating.hasHeart()) {
+            music.put(musicId, metadata);
+            return metadata;
+        } else {
+            music.remove(musicId);
+            return metadata;
+        }
+    }
 
+    public static synchronized MediaMetadataCompat updateMusicUri(String musicId, String streamUri) {
+        setSongStreamUri(musicId, streamUri);
+        MediaMetadataCompat metadata = getMetadata(musicId);
+        metadata = new MediaMetadataCompat.Builder(metadata)
+                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, streamUri)
+                .build();
         music.put(musicId, metadata);
+        return metadata;
     }
 
     public static MediaMetadataCompat getMetadata(String mediaId) {
@@ -192,7 +208,7 @@ public class MusicLibrary {
 
         // Since MediaMetadata is immutable, we need to create a copy to set the album art
         // We don't set it initially on all items so that they don't take unnecessary memory
-        MediaMetadataCompat.Builder builder = new MediaMetadataCompat.Builder(metadata);
+        //MediaMetadataCompat.Builder builder = new MediaMetadataCompat.Builder(metadata);
         /*for (String key: new String[]{MediaMetadata.METADATA_KEY_MEDIA_ID,
                 MediaMetadata.METADATA_KEY_ALBUM, MediaMetadata.METADATA_KEY_ARTIST,
                 MediaMetadata.METADATA_KEY_GENRE, MediaMetadata.METADATA_KEY_TITLE}) {
@@ -202,50 +218,58 @@ public class MusicLibrary {
                 metadataWithoutBitmap.getLong(MediaMetadata.METADATA_KEY_DURATION));
         if (albumArt != null)
             builder.putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, albumArt);*/
-        return builder.build();
+        //return builder.build();
+        return metadata;
     }
 
-    private static void createMediaMetadata(String mediaId, String title, String artist,
-                                            String genre, long duration,
-                                            String description,
-                                            String musicUrl, String albumArtUrl, boolean likes) {
-        String hiResUrl = albumArtUrl.replace("-large.jpg", "-t500x500.jpg");
+    private static void createAndAddMediaMetadata(String mediaId, String title, String artist,
+                                                  String genre, long duration,
+                                                  String description,
+                                                  String musicUrl, String albumArtUrl, boolean likes) {
         if (likes) {
             music.put(mediaId,
-                    new MediaMetadataCompat.Builder()
-                            .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mediaId)
-                            //.putString(MediaMetadata.METADATA_KEY_ALBUM, album)
-                            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
-                            .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, duration)
-                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, description)
-                            .putString(MediaMetadataCompat.METADATA_KEY_GENRE, genre)
-                            .putString(MediaMetadataCompat.METADATA_KEY_ART_URI, hiResUrl)
-                            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, hiResUrl)
-                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, albumArtUrl)
-                            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
-                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, artist)
-                            .putRating(MediaMetadataCompat.METADATA_KEY_USER_RATING, RatingCompat.newHeartRating(true))
-                            .build());
+                    createMetadata(mediaId, title, artist, genre, duration, description,
+                            musicUrl, albumArtUrl, true));
         } else {
             music2.put(mediaId,
-                    new MediaMetadataCompat.Builder()
-                            .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mediaId)
-                            //.putString(MediaMetadata.METADATA_KEY_ALBUM, album)
-                            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
-                            .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, duration)
-                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, description)
-                            .putString(MediaMetadataCompat.METADATA_KEY_GENRE, genre)
-                            .putString(MediaMetadataCompat.METADATA_KEY_ART_URI, hiResUrl)
-                            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, hiResUrl)
-                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, albumArtUrl)
-                            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
-                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, artist)
-                            .putRating(MediaMetadataCompat.METADATA_KEY_USER_RATING, RatingCompat.newHeartRating(false))
-                            .build());
+                    createMetadata(mediaId, title, artist, genre, duration, description,
+                            musicUrl, albumArtUrl, false));
         }
         //Log.d("MusicLibrary", albumArtUrl);
         albumRes.put(mediaId, albumArtUrl);
         musicRes.put(mediaId, musicUrl);
+    }
+
+    @NonNull
+    private static MediaMetadataCompat createMetadata(String mediaId, String title, String artist,
+                                                      String genre, long duration,
+                                                      String description, String musicUrl,
+                                                      String albumArtUrl, boolean like) {
+        String hiResUrl = albumArtUrl.replace("-large.jpg", "-t500x500.jpg");
+
+        return new MediaMetadataCompat.Builder()
+                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mediaId)
+                //.putString(MediaMetadata.METADATA_KEY_ALBUM, album)
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
+                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, duration)
+                .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, description)
+                .putString(MediaMetadataCompat.METADATA_KEY_GENRE, genre)
+                .putString(MediaMetadataCompat.METADATA_KEY_ART_URI, hiResUrl)
+                .putString("android.media.metadata.STREAM_URL", musicUrl)
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, hiResUrl)
+                .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, albumArtUrl)
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
+                .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, artist)
+                .putRating(MediaMetadataCompat.METADATA_KEY_USER_RATING,
+                        RatingCompat.newHeartRating(like))
+                .build();
+    }
+
+    @NonNull
+    private static void createMetadata(Track track, boolean likes) {
+        createMetadata(track.id.toString(), track.title, track.user.username,
+                track.genre, track.duration, track.description,
+                track.streamUrl, track.artworkUrl != null ? track.artworkUrl : "", likes);
     }
 
     /**
@@ -254,8 +278,8 @@ public class MusicLibrary {
      * @param track the SoundCloud track
      * @param likes if the track is in the user's likes feed
      */
-    public static void createMediaMetadata(Track track, boolean likes) {
-        createMediaMetadata(track.id.toString(), track.title, track.user.username,
+    public static void createAndAddMediaMetadata(Track track, boolean likes) {
+        createAndAddMediaMetadata(track.id.toString(), track.title, track.user.username,
                 track.genre, track.duration, track.description,
                 track.streamUrl, track.artworkUrl != null ? track.artworkUrl : "", likes);
     }
@@ -294,7 +318,7 @@ public class MusicLibrary {
                         for (Track track : tracks) {
                             Log.d("MusicLibrary",
                                     track.user.username + " (" + track.title + ")");
-                            createMediaMetadata(track, true);
+                            createAndAddMediaMetadata(track, true);
                         }
                     }
                     currentState = State.INITIALIZED;
@@ -326,7 +350,7 @@ public class MusicLibrary {
                                 Log.d("MusicLibrary",
                                         activity.origin.user.username + " (" + activity.origin.title + ")");
                                 //trackList.add(activity.origin);
-                                MusicLibrary.createMediaMetadata(activity.origin, false);
+                                MusicLibrary.createAndAddMediaMetadata(activity.origin, false);
                             }
                         }
                         //trackAdapter.notifyDataSetChanged();
@@ -387,7 +411,7 @@ public class MusicLibrary {
                             Log.d("MainActivity",
                                     activity.origin.user.username + " (" + activity.origin.title + ")");
                             //trackList.add(activity.origin);
-                            MusicLibrary.createMediaMetadata(activity.origin, false);
+                            MusicLibrary.createAndAddMediaMetadata(activity.origin, false);
                         }
                         //trackAdapter.notifyDataSetChanged();
                     }

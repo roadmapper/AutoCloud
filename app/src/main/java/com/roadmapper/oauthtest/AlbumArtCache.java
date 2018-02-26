@@ -16,6 +16,7 @@
 
 package com.roadmapper.oauthtest;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -79,6 +80,7 @@ public final class AlbumArtCache {
         return result == null ? null : result[ICON_BITMAP_INDEX];
     }
 
+    @SuppressLint("StaticFieldLeak")
     public void fetch(final String artUrl, final FetchListener listener) {
         // WARNING: for the sake of simplicity, simultaneous multi-thread fetch requests
         // are not handled properly: they may cause redundant costly operations, like HTTP

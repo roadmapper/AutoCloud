@@ -29,6 +29,9 @@ public interface SoundCloudClient {
     @GET("/me/favorites")
     Call<List<Track>> getMyFavorites(@Query("limit") long limit);
 
+    @GET("/tracks")
+    Call<List<Track>> getTracks(@Query("q") String query);
+
     @GET("/tracks/{trackId}/stream")
     Call<ResponseBody> getMediaStream(@Path("trackId") long trackId);
 

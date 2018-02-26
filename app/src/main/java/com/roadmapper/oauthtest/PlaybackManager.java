@@ -28,6 +28,8 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.roadmapper.oauthtest.entities.Urls;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -59,6 +61,7 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
     // Action to thumbs up a media item
     protected static final String CUSTOM_ACTION_SKIP_FORWARD = "com.roadmapper.oauthtest.SKIP_FORWARD";
     protected static final String CUSTOM_ACTION_LIKE = "com.roadmapper.oauthtest.LIKE";
+    protected static final String CUSTOM_ACTION_UNLIKE = "com.roadmapper.oauthtest.UNLIKE";
 
     public PlaybackManager(Context context, Callback callback) {
         this.mContext = context;
@@ -92,19 +95,19 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
             //mTitleTextView.setText(mTitle);
 
             //Picasso.with(getApplicationContext())
-                    //.load(mCoverImage)
-                    //.into(mCoverImageImageView);
+            //.load(mCoverImage)
+            //.into(mCoverImageImageView);
 
             //mPlayImageButton.setVisibility(View.GONE);
             //mPauseImageButton.setVisibility(View.VISIBLE);
 
             if (tryToGetAudioFocus()) {
-                mPlayOnFocusGain = false;
+                mPlayOnFocusGain = true;
                 mp.start();
                 mState = PlaybackStateCompat.STATE_PLAYING;
                 updatePlaybackState();
             } else {
-                mPlayOnFocusGain = true;
+                mPlayOnFocusGain = false;
             }
 
             //start media player
@@ -120,6 +123,7 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
         boolean mediaChanged = (mCurrentMedia == null || !getCurrentMediaId().equals(mediaId));
 
         mState = PlaybackStateCompat.STATE_BUFFERING;
+        updatePlaybackState();
         if (mMediaPlayer == null) {
             mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -135,9 +139,11 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
         if (mediaChanged) {
             mCurrentMedia = metadata;
             try {
+                String path = mCurrentMedia.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI);
+                Uri uri = Uri.parse(path);
                 mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mMediaPlayer.setDataSource(mContext.getApplicationContext(),
-                        Uri.parse(MusicLibrary.getSongUri(mediaId)));
+                        uri);
                 mMediaPlayer.prepareAsync();
                 mMediaPlayer.setOnPreparedListener(mMediaPlayerOnPreparedListener);
             } catch (IOException e) {
@@ -145,12 +151,12 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
             }
         } else {
             if (tryToGetAudioFocus()) {
-                mPlayOnFocusGain = false;
+                mPlayOnFocusGain = true;
                 mMediaPlayer.start();
                 mState = PlaybackStateCompat.STATE_PLAYING;
                 updatePlaybackState();
             } else {
-                mPlayOnFocusGain = true;
+                mPlayOnFocusGain = false;
             }
         }
 
@@ -187,9 +193,9 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
             // TODO: Not sure if this is necessary
             //mState = PlaybackStateCompat.STATE_FAST_FORWARDING;
             //updatePlaybackState();
-            Log.d("PlaybackManager", "Skip duration secs:" + durationMilli /1000);
+            Log.d("PlaybackManager", "Skip duration secs:" + durationMilli / 1000);
             Log.d("PlaybackManager", "current duration secs:" + mMediaPlayer.getCurrentPosition() / 1000);
-            Log.d("PlaybackManager", "final duration secs:" + (mMediaPlayer.getCurrentPosition() + durationMilli) /1000);
+            Log.d("PlaybackManager", "final duration secs:" + (mMediaPlayer.getCurrentPosition() + durationMilli) / 1000);
             mMediaPlayer.seekTo(mMediaPlayer.getCurrentPosition() + durationMilli);
             updatePlaybackState();
         }
@@ -212,21 +218,49 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
     public void onAudioFocusChange(int focusChange) {
         boolean gotFullFocus = false;
         boolean canDuck = false;
-        if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-            gotFullFocus = true;
 
-        } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS ||
-                focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT ||
-                focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
-            // We have lost focus. If we can duck (low playback volume), we can keep playing.
-            // Otherwise, we need to pause the playback.
-            canDuck = focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK;
+        switch (focusChange) {
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                // Pause playback because your Audio Focus was
+                // temporarily stolen, but will be back soon.
+                // i.e. for a phone call
+                canDuck = false;
+                break;
+            case AudioManager.AUDIOFOCUS_LOSS:
+                // Stop playback, because you lost the Audio Focus.
+                // i.e. the user started some other playback app
+                // Remember to unregister your controls/buttons here.
+                // And release the kra — Audio Focus!
+                // You’re done.
+                mAudioManager.abandonAudioFocus(this);
+                canDuck = false;
+                break;
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                // Lower the volume, because something else is also
+                // playing audio over you.
+                // i.e. for notifications or navigation directions
+                // Depending on your audio playback, you may prefer to
+                // pause playback here instead. You do you.
+
+                // We have lost focus. If we can duck (low playback volume), we can keep playing.
+                // Otherwise, we need to pause the playback.
+                canDuck = true;
+                break;
+            case AudioManager.AUDIOFOCUS_GAIN:
+                // Resume playback, because you hold the Audio Focus
+                // again!
+                // i.e. the phone call ended or the nav directions
+                // are finished
+                // If you implement ducking and lower the volume, be
+                // sure to return it to normal here, as well.
+                gotFullFocus = true;
+                break;
         }
 
         if (gotFullFocus || canDuck) {
             if (mMediaPlayer != null) {
                 if (mPlayOnFocusGain) {
-                    mPlayOnFocusGain = false;
+                    //mPlayOnFocusGain = false;
                     mMediaPlayer.start();
                     mState = PlaybackStateCompat.STATE_PLAYING;
                     updatePlaybackState();
@@ -250,10 +284,17 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
     public void onCompletion(MediaPlayer player) {
         //stop();
         //player.reset();
-
-        SoundCloudClient client = ServiceGenerator.createService(SoundCloudClient.class);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
-        Call<ResponseBody> call = client.getMediaStream(Long.parseLong(MusicLibrary.getNextSong(mCurrentMedia.getDescription().getMediaId())));
-        call.enqueue(streamUrlCallback);
+        String mediaId = MusicLibrary.getNextSong(mCurrentMedia.getDescription().getMediaId());
+        MediaMetadataCompat nextSong = MusicLibrary.getMetadata(mediaId);
+        if (nextSong.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI) != null) {
+            play(nextSong);
+        } else {
+            SoundCloudClient client = ServiceGenerator.createService(SoundCloudClient.class);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
+            //Call<ResponseBody> call = client.getMediaStream(Long.parseLong(MusicLibrary.getNextSong(mCurrentMedia.getDescription().getMediaId())));
+            //call.enqueue(streamUrlCallback);
+            Call<Urls> call2 = client.getMediaStreams(Long.parseLong(mediaId));
+            call2.enqueue(streamUrlCallback2);
+        }
     }
 
     private retrofit2.Callback<ResponseBody> streamUrlCallback = new retrofit2.Callback<ResponseBody>() {
@@ -262,21 +303,53 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
 
             List<String> url = call.request().url().pathSegments();
             String trackId = url.get(url.indexOf("tracks") + 1);
-            String streamUrl = null;
+            String streamUrl;
             okhttp3.Headers headers = response.headers();
             streamUrl = headers.get("Location");
+            Log.d(TAG, streamUrl);
 
             if (!TextUtils.isEmpty(streamUrl)) {
-                MusicLibrary.setSongStreamUri(trackId, streamUrl);
-                MediaMetadataCompat metadata = MusicLibrary.getMetadata(trackId);
+                MediaMetadataCompat metadata = MusicLibrary.updateMusicUri(trackId, streamUrl);
                 play(metadata);
             }
         }
 
         @Override
         public void onFailure(Call<ResponseBody> call, Throwable t) {
-            Log.d("MainActivity", "Failure");
-            Log.d("MainActivity", t.getMessage());
+            Log.d(TAG, "Failure");
+            Log.d(TAG, t.getMessage());
+        }
+    };
+
+    private retrofit2.Callback<Urls> streamUrlCallback2 = new retrofit2.Callback<Urls>() {
+        @Override
+        public void onResponse(Call<Urls> call, Response<Urls> response) {
+            Urls urls = response.body();
+            List<String> url = call.request().url().pathSegments();
+            String trackId = url.get(url.indexOf("tracks") + 1);
+            String streamUrl;
+            if (urls == null) {
+                mState = PlaybackStateCompat.STATE_ERROR;
+                updatePlaybackState();
+            } else {
+                //if (urls.hls_url != null) {
+                //    streamUrl = urls.hls_url;
+                //} else {
+                    streamUrl = urls.http_url;
+                //}
+                Log.d(TAG, "URL: " + streamUrl);
+
+                if (!TextUtils.isEmpty(streamUrl)) {
+                    MediaMetadataCompat metadata = MusicLibrary.updateMusicUri(trackId, streamUrl);
+                    play(metadata);
+                }
+            }
+        }
+
+        @Override
+        public void onFailure(Call<Urls> call, Throwable t) {
+            Log.d("MusicService", "Failure");
+            Log.d("MusicService", t.getMessage());
         }
     };
 
@@ -294,7 +367,7 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
     private long getAvailableActions() {
         long actions = PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID |
                 PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH |
-                PlaybackStateCompat.ACTION_SKIP_TO_NEXT  | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS;
+                PlaybackStateCompat.ACTION_SKIP_TO_NEXT | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS;
         if (isPlaying()) {
             actions |= PlaybackStateCompat.ACTION_PAUSE;
         }
@@ -308,9 +381,9 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
 
         Log.d(TAG, "updatePlaybackState, playback state=" + mState);
         long position = PlaybackState.PLAYBACK_POSITION_UNKNOWN;
-        //if (mPlayback != null && mPlayback.isConnected()) {
+        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {//.isConnected()) {
             position = getCurrentStreamPosition();
-        //}
+        }
 
         //noinspection ResourceType
         PlaybackStateCompat.Builder stateBuilder = new PlaybackStateCompat.Builder()
@@ -321,10 +394,10 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
 
         // If there is an error message, send it to the playback state:
         //if (error != null) {
-            // Error states are really only supposed to be used for errors that cause playback to
-            // stop unexpectedly and persist until the user takes action to fix it.
-            //stateBuilder.setErrorMessage(error);
-            //state = PlaybackStateCompat.STATE_ERROR;
+        // Error states are really only supposed to be used for errors that cause playback to
+        // stop unexpectedly and persist until the user takes action to fix it.
+        //stateBuilder.setErrorMessage(error);
+        //state = PlaybackStateCompat.STATE_ERROR;
         //}
         //noinspection ResourceType
         stateBuilder.setState(mState, position, 1.0f, SystemClock.elapsedRealtime());
@@ -384,13 +457,14 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
         if (mCurrentMedia != null) {
 
 
-        if(mCurrentMedia.getRating(MediaMetadataCompat.METADATA_KEY_USER_RATING).hasHeart()) {
-        stateBuilder.addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
-                CUSTOM_ACTION_LIKE, "Unlike", likeIcon2).setExtras(customActionExtras).build());
-        } else {
-            stateBuilder.addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
-                    CUSTOM_ACTION_LIKE, "Like", likeIcon).setExtras(customActionExtras).build());
-        }}
+            if (mCurrentMedia.getRating(MediaMetadataCompat.METADATA_KEY_USER_RATING).hasHeart()) {
+                stateBuilder.addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
+                        CUSTOM_ACTION_LIKE, "Unlike", likeIcon2).setExtras(customActionExtras).build());
+            } else {
+                stateBuilder.addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
+                        CUSTOM_ACTION_LIKE, "Like", likeIcon).setExtras(customActionExtras).build());
+            }
+        }
     }
 
     public interface Callback {

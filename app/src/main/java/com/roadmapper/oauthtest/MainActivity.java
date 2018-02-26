@@ -1,5 +1,7 @@
 package com.roadmapper.oauthtest;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -95,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("MainActivity",
                             activity.origin.user.username + " (" + activity.origin.title + ")");
                     trackList.add(activity.origin);
-                    MusicLibrary.createMediaMetadata(activity.origin, false);
+                    MusicLibrary.createAndAddMediaMetadata(activity.origin, false);
                 }
                 trackAdapter.notifyDataSetChanged();
             }
@@ -136,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("MainActivity",
                             track.user.username + " (" + track.title + ")");
                     //trackList.add(activity.origin);
-                    MusicLibrary.createMediaMetadata(track, true);
+                    MusicLibrary.createAndAddMediaMetadata(track, true);
                 }
                 trackAdapter.notifyDataSetChanged();
 
@@ -215,9 +217,9 @@ public class MainActivity extends AppCompatActivity {
     private void updatePlaybackState(PlaybackStateCompat state) {
         mCurrentState = state;
         if (state == null || state.getState() == PlaybackStateCompat.STATE_PAUSED ||
-                state.getState() == PlaybackStateCompat.STATE_STOPPED) {
+                state.getState() == PlaybackStateCompat.STATE_STOPPED || state.getState() == PlaybackStateCompat.STATE_BUFFERING) {
             mPlayPause.setImageDrawable(getDrawable(android.R.drawable.ic_media_play));
-        } else {
+        } else if (state.getState() == PlaybackStateCompat.STATE_PLAYING) {
             mPlayPause.setImageDrawable(getDrawable(android.R.drawable.ic_media_pause));
 
             //update seekbar
@@ -286,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
                 Bitmap art = null; //metadata.getDescription().getIconBitmap();
                 AlbumArtCache cache = AlbumArtCache.getInstance();
                 //if (art == null) {
-                    art = cache.getBigImage(artUrl);
+                art = cache.getBigImage(artUrl);
                 //}
                 if (art != null) {
                     mAlbumArt.setImageBitmap(art);
@@ -298,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
                                         Log.d("MainActivity", "album art icon of w=" + icon.getWidth() +
                                                 " h=" + icon.getHeight());
 
-                                            mAlbumArt.setImageBitmap(icon);
+                                        mAlbumArt.setImageBitmap(icon);
                                         //}
                                     }
                                     MusicLibrary.updateMusicArt(meta.getDescription().getMediaId(), bitmap, icon);
@@ -341,6 +343,8 @@ public class MainActivity extends AppCompatActivity {
         mMediaBrowser = new MediaBrowserCompat(this,
                 new ComponentName(this, MusicService.class), mConnectionCallback, null);
         mMediaBrowser.connect();
+
+
     }
 
     @Override
@@ -399,26 +403,26 @@ public class MainActivity extends AppCompatActivity {
         token = new AccessToken(AutoCloudApplication.OAUTH_TOKEN_WEB, scope);
         client = ServiceGenerator.createService(SoundCloudClient.class, token);
         //if (getActivityButton != null) {
-            //getActivityButton.setOnClickListener(new View.OnClickListener() {
-                //@Override
-                //public void onClick(View v) {
-                    Log.d("MainActivity", "getActivity");
+        //getActivityButton.setOnClickListener(new View.OnClickListener() {
+        //@Override
+        //public void onClick(View v) {
+        Log.d("MainActivity", "getActivity");
                     /*Call<AffiliatedActivities> call = client.getStreamTracks(50);
                     call.enqueue(callback);*/
 
-                    Call<List<Track>> call = client.getMyFavorites(100);
-                    call.enqueue(callback2);
-                //}
-            //});
+        Call<List<Track>> call = client.getMyFavorites(100);
+        call.enqueue(callback2);
+        //}
+        //});
         //}
 
         trackAdapter.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(View v, int adapterPosition) {
-                    MediaBrowserCompat.MediaItem item = MusicLibrary.getMediaItem(trackList.get(adapterPosition).id.toString());
-                    onMediaItemSelected(item);
-                }
-            });
+            @Override
+            public void onItemClick(View v, int adapterPosition) {
+                MediaBrowserCompat.MediaItem item = MusicLibrary.getMediaItem(trackList.get(adapterPosition).id.toString());
+                onMediaItemSelected(item);
+            }
+        });
 
         mPlayPause.setOnClickListener(mPlaybackButtonListener);
 

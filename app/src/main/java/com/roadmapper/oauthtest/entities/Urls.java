@@ -15,6 +15,10 @@ public class Urls {
     public String hls_url;
 
     @Nullable
+    @SerializedName("hls_opus_64_url")
+    public String hls_opus_url;
+
+    @Nullable
     @SerializedName("rtmp_mp3_128_url")
     public String rtmp_url;
 
