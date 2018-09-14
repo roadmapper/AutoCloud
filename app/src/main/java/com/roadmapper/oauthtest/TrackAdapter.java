@@ -56,7 +56,7 @@ public class TrackAdapter extends ArrayAdapter<Track> {
         Track item = tracks.get(position);
 
         // Fill data into the ViewHolder
-        Picasso.with(context)
+        Picasso.get()
                 .load(item.artworkUrl)
                 .into(holder.artwork);
         holder.trackName.setText(item.title);

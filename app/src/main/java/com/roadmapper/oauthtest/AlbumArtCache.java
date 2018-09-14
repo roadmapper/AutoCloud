@@ -116,8 +116,7 @@ public final class AlbumArtCache {
                 protected Bitmap[] doInBackground(Void[] objects) {
                     Bitmap[] bitmaps;
                     try {
-                        Bitmap bitmap = Picasso.with(AutoCloudApplication.getAppContext())
-                                .load(hiResUrl).get();
+                        Bitmap bitmap = Picasso.get().load(hiResUrl).get();
                         Bitmap icon = BitmapHelper.scaleBitmap(bitmap,
                                 MAX_ART_WIDTH_ICON, MAX_ART_HEIGHT_ICON);
                         bitmaps = new Bitmap[]{bitmap, icon};

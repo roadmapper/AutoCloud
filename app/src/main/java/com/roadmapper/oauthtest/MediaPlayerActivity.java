@@ -131,7 +131,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
             mArtistTextView.setText(mArtist);
             mTitleTextView.setText(mTitle);
 
-            Picasso.with(getApplicationContext())
+            Picasso.get()
                     .load(mCoverImage)
                     .into(mCoverImageImageView);
 

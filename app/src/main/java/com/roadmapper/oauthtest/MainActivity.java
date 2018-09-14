@@ -318,23 +318,23 @@ public class MainActivity extends AppCompatActivity {
         //trackAdapter.notifyDataSetChanged();
     }
 
-    Target target = new Target() {
-        @Override
-        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-            mAlbumArt.setImageBitmap(bitmap);
-            MusicLibrary.setAlbumResBitmap(mCurrentMetadata.getDescription().getMediaId(), bitmap);
-        }
-
-        @Override
-        public void onBitmapFailed(Drawable errorDrawable) {
-            mAlbumArt.setImageBitmap(null);
-        }
-
-        @Override
-        public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-        }
-    };
+//    Target target = new Target() {
+//        @Override
+//        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+//            mAlbumArt.setImageBitmap(bitmap);
+//            MusicLibrary.setAlbumResBitmap(mCurrentMetadata.getDescription().getMediaId(), bitmap);
+//        }
+//
+//        @Override
+//        public void onBitmapFailed(Drawable errorDrawable) {
+//            mAlbumArt.setImageBitmap(null);
+//        }
+//
+//        @Override
+//        public void onPrepareLoad(Drawable placeHolderDrawable) {
+//
+//        }
+//    };
 
     @Override
     public void onStart() {

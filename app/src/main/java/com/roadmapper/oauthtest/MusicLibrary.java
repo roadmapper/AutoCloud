@@ -104,7 +104,7 @@ public class MusicLibrary {
         String url = getAlbumRes(mediaId);
         if (url != null)
             url = url.replace("-large.jpg", "-crop.jpg");
-        Picasso.with(ctx).load(url).into(target);
+        Picasso.get().load(url).into(target);
     }
 
     public static List<MediaBrowserCompat.MediaItem> getMediaItems(String mediaId) {
