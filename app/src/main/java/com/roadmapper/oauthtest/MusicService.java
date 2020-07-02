@@ -23,17 +23,26 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.android.exoplayer2.util.Util;
+import com.google.gson.Gson;
+import com.roadmapper.oauthtest.entities.StreamUrl;
 import com.roadmapper.oauthtest.entities.TrackUrn;
 import com.roadmapper.oauthtest.entities.Urls;
 import com.roadmapper.oauthtest.entities.UserProfile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
 
 /**
  * This class provides a MediaBrowser through a service. It exposes the media library to a browsing
@@ -120,6 +129,7 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
             throw new IllegalStateException("Could not create a MediaNotificationManager", e);
         }
         mPlayback = new PlaybackManager(this, this);
+        Util.startForegroundService(this, new Intent(this, MusicService.class));
     }
 
     @Override
@@ -315,38 +325,38 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
         }
     }
 
-    private Callback<Urls> streamUrlCallback2 = new Callback<Urls>() {
-        @Override
-        public void onResponse(Call<Urls> call, Response<Urls> response) {
-            Urls urls = response.body();
-            List<String> url = call.request().url().pathSegments();
-            String trackId = url.get(url.indexOf("tracks") + 1);
-            String streamUrl = null;
-            if (urls == null) {
-                mSession.setPlaybackState(new PlaybackStateCompat.Builder().setState(
-                        PlaybackStateCompat.STATE_ERROR, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 0).build());
-            } else {
-                //if (urls.hls_url != null) {
-                //    streamUrl = urls.hls_url;
-                //} else {
-                streamUrl = urls.http_url;
-                //}
-                Log.d(TAG, "url: " + streamUrl);
-
-
-                if (!TextUtils.isEmpty(streamUrl)) {
-                    MediaMetadataCompat metadata = MusicLibrary.updateMusicUri(trackId, streamUrl);
-                    setSessionMetadataAndPlay(metadata);
-                }
-            }
-        }
-
-        @Override
-        public void onFailure(Call<Urls> call, Throwable t) {
-            Log.d("MusicService", "Failure");
-            Log.d("MusicService", t.getMessage());
-        }
-    };
+//    private okhttp3.Callback streamUrlCallback2 = new Callback<Urls>() {
+//        @Override
+//        public void onResponse(Call<Urls> call, Response<Urls> response) {
+//            Urls urls = response.body();
+//            List<String> url = call.request().url().pathSegments();
+//            String trackId = url.get(url.indexOf("tracks") + 1);
+//            String streamUrl = null;
+//            if (urls == null) {
+//                mSession.setPlaybackState(new PlaybackStateCompat.Builder().setState(
+//                        PlaybackStateCompat.STATE_ERROR, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 0).build());
+//            } else {
+////                if (urls.hls_url != null) {
+////                    streamUrl = urls.hls_url;
+////                } else {
+//                    streamUrl = urls.http_url;
+//                //}
+//                Log.d(TAG, "url: " + streamUrl);
+//
+//
+//                if (!TextUtils.isEmpty(streamUrl)) {
+//                    MediaMetadataCompat metadata = MusicLibrary.updateMusicUri(trackId, streamUrl);
+//                    setSessionMetadataAndPlay(metadata);
+//                }
+//            }
+//        }
+//
+//        @Override
+//        public void onFailure(Call<Urls> call, Throwable t) {
+//            Log.d("MusicService", "Failure");
+//            Log.d("MusicService", t.getMessage());
+//        }
+//    };
 
     final MediaSessionCompat.Callback mCallback = new MediaSessionCompat.Callback() {
         @Override
@@ -364,12 +374,57 @@ public class MusicService extends MediaBrowserServiceCompat implements PlaybackM
             if (metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI) != null) {
                 setSessionMetadataAndPlay(metadata);
             } else {
-                SoundCloudClient client = ServiceGenerator.createService(SoundCloudClient.class);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
-                //Call<ResponseBody> call = client.getMediaStream(Long.parseLong(metadata.getString(
-                //        MediaMetadataCompat.METADATA_KEY_MEDIA_ID)));
-                //call.enqueue(streamUrlCallback);
-                Call<Urls> call2 = client.getMediaStreams(Long.parseLong(metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)));
-                call2.enqueue(streamUrlCallback2);
+                //SoundCloud2Client client = ServiceGenerator.createService(SoundCloud2Client.class);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
+
+                OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+                httpClient.addInterceptor(chain -> {
+                    Request original = chain.request();
+                    if (original.url().queryParameter("oauth_token") == null) {
+                        HttpUrl url = original.url().newBuilder().addQueryParameter("oauth_token", BuildConfig.token).build();
+                        Log.d("MusicService", url.toString());
+                        Request request = original.newBuilder().url(url).build();
+                        return chain.proceed(request);
+                    }
+                    else
+                        return chain.proceed(original);
+                });
+                OkHttpClient client = httpClient.build();
+
+                Request request = new Request.Builder()
+                        .url(metadata.getString("android.media.metadata.STREAM_URL"))
+                        .get()
+                        .build();
+                client.newCall(request).enqueue(new okhttp3.Callback() {
+                    @Override
+                    public void onFailure(okhttp3.Call call, IOException e) {
+                        Log.d("MusicService", "Failure");
+                        Log.d("MusicService", e.getMessage());
+                    }
+
+                    @Override
+                    public void onResponse(okhttp3.Call call, okhttp3.Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            Gson gson = new Gson();
+                            ResponseBody responseBody = response.body();
+                            StreamUrl url = gson.fromJson(responseBody.string(), StreamUrl.class);
+
+                            if (url == null || url.url.isEmpty()) {
+                                mSession.setPlaybackState(new PlaybackStateCompat.Builder().setState(
+                                        PlaybackStateCompat.STATE_ERROR, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 0).build());
+                            } else {
+                                String streamUrl = url.url;
+                                Log.d(TAG, "stream url: " + streamUrl);
+
+                                if (!TextUtils.isEmpty(url.url)) {
+                                    MediaMetadataCompat metadata2 = MusicLibrary.updateMusicUri(mediaId, streamUrl);
+                                    setSessionMetadataAndPlay(metadata2);
+                                }
+                            }
+                        }
+                    }
+                });
+
+                //call2.enqueue(streamUrlCallback2);
             }
 
 

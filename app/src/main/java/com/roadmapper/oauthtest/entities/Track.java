@@ -97,4 +97,6 @@ public class Track {
      String attachmentsUri;
      @SerializedName("policy")
      String policy;
+     @SerializedName("media")
+     public Media media;
 }

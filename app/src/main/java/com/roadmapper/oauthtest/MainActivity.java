@@ -34,8 +34,6 @@ import android.widget.TextView;
 import com.roadmapper.oauthtest.entities.Activity;
 import com.roadmapper.oauthtest.entities.AffiliatedActivities;
 import com.roadmapper.oauthtest.entities.Track;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     public static AccessToken token = null;
 
     public static SoundCloudClient client;
+    public static SoundCloud2Client client2;
+
 
     private MediaBrowserCompat mMediaBrowser;
 
@@ -95,11 +95,20 @@ public class MainActivity extends AppCompatActivity {
                 trackList.clear();
                 for (Activity activity : activities) {
                     Log.d("MainActivity",
-                            activity.origin.user.username + " (" + activity.origin.title + ")");
-                    trackList.add(activity.origin);
-                    MusicLibrary.createAndAddMediaMetadata(activity.origin, false);
+                            activity.track.user.username + " (" + activity.track.title + ")");
+
+                    boolean added = MusicLibrary.createAndAddMediaMetadata(activity.track, true);
+                    if (added)
+                        trackList.add(activity.track);
                 }
                 trackAdapter.notifyDataSetChanged();
+
+                // Remember to CLEAR OUT old items before appending in the new ones
+                //adapter.clear();
+                // ...the data has come back, add new items to your adapter...
+                //adapter.addAll(...);
+                // Now we call setRefreshing(false) to signal refresh has finished
+                swipeContainer.setRefreshing(false);
             }
 
         }
@@ -402,16 +411,19 @@ public class MainActivity extends AppCompatActivity {
         String scope = SharedPrefManager.getInstance().readSharedPrefString(R.string.oauth_scope);
         token = new AccessToken(AutoCloudApplication.OAUTH_TOKEN_WEB, scope);
         client = ServiceGenerator.createService(SoundCloudClient.class, token);
+        client2 = ServiceGenerator.createService(SoundCloud2Client.class, token);
+
         //if (getActivityButton != null) {
         //getActivityButton.setOnClickListener(new View.OnClickListener() {
         //@Override
         //public void onClick(View v) {
         Log.d("MainActivity", "getActivity");
-                    /*Call<AffiliatedActivities> call = client.getStreamTracks(50);
-                    call.enqueue(callback);*/
+                    Call<AffiliatedActivities> call = client2.getMyFavorites(AutoCloudApplication.CLIENT_ID_WEB, 100);
+                    call.enqueue(callback);
 
-        Call<List<Track>> call = client.getMyFavorites(100);
-        call.enqueue(callback2);
+        //Call<List<Track>> call = client.getMyFavorites(100);
+        //call.enqueue(callback2);
+
         //}
         //});
         //}

@@ -16,7 +16,6 @@
 
 package com.roadmapper.oauthtest;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v4.media.MediaBrowserCompat;
@@ -27,8 +26,7 @@ import android.util.Log;
 import com.roadmapper.oauthtest.entities.Activity;
 import com.roadmapper.oauthtest.entities.AffiliatedActivities;
 import com.roadmapper.oauthtest.entities.Track;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
+import com.roadmapper.oauthtest.entities.Transcoding;
 
 import org.apache.commons.collections4.map.LinkedMap;
 
@@ -100,12 +98,12 @@ public class MusicLibrary {
         return albumRes.containsKey(mediaId) ? albumRes.get(mediaId) : "";
     }
 
-    public static void getAlbumBitmap(Context ctx, String mediaId, Target target) {
-        String url = getAlbumRes(mediaId);
-        if (url != null)
-            url = url.replace("-large.jpg", "-crop.jpg");
-        Picasso.get().load(url).into(target);
-    }
+//    public static void getAlbumBitmap(Context ctx, String mediaId, Target target) {
+//        String url = getAlbumRes(mediaId);
+//        if (url != null)
+//            url = url.replace("-large.jpg", "-crop.jpg");
+//        Picasso.get().load(url).into(target);
+//    }
 
     public static List<MediaBrowserCompat.MediaItem> getMediaItems(String mediaId) {
         List<MediaBrowserCompat.MediaItem> result = new ArrayList<>();
@@ -277,11 +275,23 @@ public class MusicLibrary {
      *
      * @param track the SoundCloud track
      * @param likes if the track is in the user's likes feed
+     * @return track was added to the feed
      */
-    public static void createAndAddMediaMetadata(Track track, boolean likes) {
-        createAndAddMediaMetadata(track.id.toString(), track.title, track.user.username,
-                track.genre, track.duration, track.description,
-                track.streamUrl, track.artworkUrl != null ? track.artworkUrl : "", likes);
+    public static boolean createAndAddMediaMetadata(Track track, boolean likes) {
+        List<Transcoding> transcodings = track.media.transcodings;
+        //transcodings.forEach(t -> Log.d("MusicLibrary", t.url));
+        if (transcodings.stream().filter(t -> t.format.protocol.equals("progressive")).count() >= 1) {
+            createAndAddMediaMetadata(track.id.toString(), track.title, track.user.username,
+                    track.genre, track.duration, track.description,
+                    transcodings.stream()
+                            .filter(t -> t.format.protocol.equals("progressive"))
+                            .filter(t -> t.format.mimeType.equals("audio/mpeg"))
+                            .findFirst()
+                            .get()
+                            .url, track.artworkUrl != null ? track.artworkUrl : "", likes);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -304,38 +314,39 @@ public class MusicLibrary {
         if (!"".equals(code) && !"".equals(scope)) {
             AccessToken token = new AccessToken(code, scope);
             SoundCloudClient client = ServiceGenerator.createService(SoundCloudClient.class, token);
+            SoundCloud2Client client2 = ServiceGenerator.createService(SoundCloud2Client.class, token);
 
             // Asynchronously load the music catalog in a separate thread
-            Call<List<Track>> call = client.getMyFavorites(100);
-            call.enqueue(new retrofit2.Callback<List<Track>>() {
-                @Override
-                public void onResponse(Call<List<Track>> call, Response<List<Track>> response) {
-                    Log.d("MusicLibrary", response.message());
-                    Log.d("MusicLibrary", response.code() + "");
-                    Log.d("MusicLibrary", response.headers().toString());
-                    List<Track> tracks = response.body();
-                    if (tracks != null) {
-                        for (Track track : tracks) {
-                            Log.d("MusicLibrary",
-                                    track.user.username + " (" + track.title + ")");
-                            createAndAddMediaMetadata(track, true);
-                        }
-                    }
-                    currentState = State.INITIALIZED;
-                    callback.onMusicCatalogReady(currentState == State.INITIALIZED);
-                }
+//            Call<List<Track>> call = client.getMyFavorites(100);
+//            call.enqueue(new retrofit2.Callback<List<Track>>() {
+//                @Override
+//                public void onResponse(Call<List<Track>> call, Response<List<Track>> response) {
+//                    Log.d("MusicLibrary", response.message());
+//                    Log.d("MusicLibrary", response.code() + "");
+//                    Log.d("MusicLibrary", response.headers().toString());
+//                    List<Track> tracks = response.body();
+//                    if (tracks != null) {
+//                        for (Track track : tracks) {
+//                            Log.d("MusicLibrary",
+//                                    track.user.username + " (" + track.title + ")");
+//                            createAndAddMediaMetadata(track, true);
+//                        }
+//                    }
+//                    currentState = State.INITIALIZED;
+//                    callback.onMusicCatalogReady(currentState == State.INITIALIZED);
+//                }
+//
+//                @Override
+//                public void onFailure(Call<List<Track>> call, Throwable t) {
+//                    Log.d("MusicLibrary", "Failure");
+//                    Log.d("MusicLibrary", t.getMessage());
+//                    currentState = State.NON_INITIALIZED;
+//                    callback.onMusicCatalogReady(currentState == State.INITIALIZED);
+//                }
+//            });
 
-                @Override
-                public void onFailure(Call<List<Track>> call, Throwable t) {
-                    Log.d("MusicLibrary", "Failure");
-                    Log.d("MusicLibrary", t.getMessage());
-                    currentState = State.NON_INITIALIZED;
-                    callback.onMusicCatalogReady(currentState == State.INITIALIZED);
-                }
-            });
-
-            Call<AffiliatedActivities> call2 = client.getStreamTracks(100);
-            call2.enqueue(new retrofit2.Callback<AffiliatedActivities>() {
+            Call<AffiliatedActivities> call = client2.getMyFavorites(AutoCloudApplication.CLIENT_ID_WEB, 100);
+            call.enqueue(new retrofit2.Callback<AffiliatedActivities>() {
                 @Override
                 public void onResponse(Call<AffiliatedActivities> call, Response<AffiliatedActivities> response) {
                     Log.d("MusicLibrary", response.message());
@@ -348,9 +359,43 @@ public class MusicLibrary {
                             // activity.origin can be null, we don't want to show type playlist, unable to extract data out of that currently
                             if (activity.origin != null && !activity.type.equals("playlist")) {
                                 Log.d("MusicLibrary",
-                                        activity.origin.user.username + " (" + activity.origin.title + ")");
+                                        activity.track.user.username + " (" + activity.track.title + ")");
                                 //trackList.add(activity.origin);
-                                MusicLibrary.createAndAddMediaMetadata(activity.origin, false);
+                                MusicLibrary.createAndAddMediaMetadata(activity.track, true);
+                            }
+                        }
+                        //trackAdapter.notifyDataSetChanged();
+                    }
+                    currentState = State.INITIALIZED;
+                    callback.onMusicCatalogReady(currentState == State.INITIALIZED);
+                }
+
+                @Override
+                public void onFailure(Call<AffiliatedActivities> call, Throwable t) {
+                    Log.d("MusicLibrary", "Failure");
+                    Log.d("MusicLibrary", t.getMessage());
+                    currentState = State.NON_INITIALIZED;
+                    callback.onMusicCatalogReady(currentState == State.INITIALIZED);
+                }
+            });
+
+            Call<AffiliatedActivities> call2 = client2.getStreamTracks(AutoCloudApplication.CLIENT_ID_WEB, 100);
+            call2.enqueue(new retrofit2.Callback<AffiliatedActivities>() {
+                @Override
+                public void onResponse(Call<AffiliatedActivities> call, Response<AffiliatedActivities> response) {
+                    Log.d("MusicLibrary", response.message());
+                    Log.d("MusicLibrary", response.code() + "");
+                    Log.d("MusicLibrary", response.headers().toString());
+                    List<Activity> activities = response.body().collection;
+                    if (activities != null) {
+                        //trackList.clear();
+                        for (Activity activity : activities) {
+                            // activity.origin can be null, we don't want to show type playlist, unable to extract data out of that currently
+                            if (activity.track != null && !activity.type.equals("playlist")) {
+                                Log.d("MusicLibrary",
+                                        activity.track.user.username + " (" + activity.track.title + ")");
+                                //trackList.add(activity.origin);
+                                MusicLibrary.createAndAddMediaMetadata(activity.track, false);
                             }
                         }
                         //trackAdapter.notifyDataSetChanged();

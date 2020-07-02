@@ -4,7 +4,7 @@
     <string name="oauth_token">oauth_token</string>
     <string name="oauth_scope">oauth_scope</string>
     <string name="client_id">9bb67cdbb1308b72aaa3c1cd59152336</string>
-    <string name="soundcloud_web_client_id">02gUJC0hH2ct1EGOcYXQIzRFU91c72Ea</string>
+    <string name="soundcloud_web_client_id">3JLYybc5BG7YPqpXxjNj8OQMnRMGYbIm</string>
     <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->

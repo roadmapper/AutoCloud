@@ -16,6 +16,7 @@
 package com.roadmapper.oauthtest;
 
 import android.content.Context;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.session.PlaybackState;
@@ -23,16 +24,22 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.SystemClock;
+import android.support.v4.media.AudioAttributesCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.roadmapper.oauthtest.entities.StreamUrl;
 import com.roadmapper.oauthtest.entities.Urls;
 
 import java.io.IOException;
 import java.util.List;
 
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -126,7 +133,11 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
         updatePlaybackState();
         if (mMediaPlayer == null) {
             mMediaPlayer = new MediaPlayer();
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            AudioAttributes attr = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build();
+            mMediaPlayer.setAudioAttributes(attr);
             mMediaPlayer.setWakeMode(mContext.getApplicationContext(),
                     PowerManager.PARTIAL_WAKE_LOCK);
             mMediaPlayer.setOnCompletionListener(this);
@@ -141,7 +152,7 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
             try {
                 String path = mCurrentMedia.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI);
                 Uri uri = Uri.parse(path);
-                mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
                 mMediaPlayer.setDataSource(mContext.getApplicationContext(),
                         uri);
                 mMediaPlayer.prepareAsync();
@@ -289,11 +300,62 @@ class PlaybackManager implements AudioManager.OnAudioFocusChangeListener,
         if (nextSong.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI) != null) {
             play(nextSong);
         } else {
-            SoundCloudClient client = ServiceGenerator.createService(SoundCloudClient.class);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
-            //Call<ResponseBody> call = client.getMediaStream(Long.parseLong(MusicLibrary.getNextSong(mCurrentMedia.getDescription().getMediaId())));
-            //call.enqueue(streamUrlCallback);
-            Call<Urls> call2 = client.getMediaStreams(Long.parseLong(mediaId));
-            call2.enqueue(streamUrlCallback2);
+//            SoundCloud2Client client = ServiceGenerator.createService(SoundCloud2Client.class);//, AutoCloudApplication.CLIENT_ID, AutoCloudApplication.CLIENT_SECRET);
+//            //Call<ResponseBody> call = client.getMediaStream(Long.parseLong(MusicLibrary.getNextSong(mCurrentMedia.getDescription().getMediaId())));
+//            //call.enqueue(streamUrlCallback);
+//            Call<Urls> call2 = client.getMediaStreams(Long.parseLong(mediaId));
+//            call2.enqueue(streamUrlCallback2);
+            String nextMediaId = MusicLibrary.getNextSong(mCurrentMedia.getDescription().getMediaId());
+            MediaMetadataCompat metadata = MusicLibrary.getMetadata(nextMediaId);
+
+            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+            httpClient.addInterceptor(chain -> {
+                Request original = chain.request();
+                if (original.url().queryParameter("oauth_token") == null) {
+                    HttpUrl url = original.url().newBuilder().addQueryParameter("oauth_token", BuildConfig.token).build();
+                    Log.d("MusicService", url.toString());
+                    Request request = original.newBuilder().url(url).build();
+                    return chain.proceed(request);
+                }
+                else
+                    return chain.proceed(original);
+            });
+            OkHttpClient client = httpClient.build();
+
+            Request request = new Request.Builder()
+                    .url(metadata.getString("android.media.metadata.STREAM_URL"))
+                    .get()
+                    .build();
+            mState = PlaybackStateCompat.STATE_BUFFERING;
+            client.newCall(request).enqueue(new okhttp3.Callback() {
+                @Override
+                public void onFailure(okhttp3.Call call, IOException e) {
+                    Log.d("MusicService", "Failure");
+                    Log.d("MusicService", e.getMessage());
+                }
+
+                @Override
+                public void onResponse(okhttp3.Call call, okhttp3.Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        Gson gson = new Gson();
+                        ResponseBody responseBody = response.body();
+                        StreamUrl url = gson.fromJson(responseBody.string(), StreamUrl.class);
+
+                        if (url == null || url.url.isEmpty()) {
+                            mState = PlaybackStateCompat.STATE_ERROR;
+                            updatePlaybackState();
+                        } else {
+                            String streamUrl = url.url;
+                            Log.d(TAG, "stream url: " + streamUrl);
+
+                            if (!TextUtils.isEmpty(streamUrl)) {
+                                MediaMetadataCompat metadata = MusicLibrary.updateMusicUri(nextMediaId, streamUrl);
+                                play(metadata);
+                            }
+                        }
+                    }
+                }
+            });
         }
     }
 

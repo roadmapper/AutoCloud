@@ -15,5 +15,6 @@ public class AffiliatedActivities {
     public List<Activity> collection;
     @SerializedName("next_href")
     public String nextHref;
-
+    @SerializedName("query_urn")
+    public String queryUrn;
 }

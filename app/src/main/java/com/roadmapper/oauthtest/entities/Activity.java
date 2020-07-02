@@ -17,4 +17,8 @@ public class Activity {
     public String createdAt;
     @SerializedName("type")
     public String type;
+    @SerializedName("kind")
+    public String kind;
+    @SerializedName("track")
+    public Track track;
 }
